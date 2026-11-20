@@ -1,0 +1,1406 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Counterline Pharmacy Desk</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600;700&family=Public+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: app shell. Fixed left rail on desktop, bottom tab bar on phones; content column with a slide-over record drawer. */
+:root {
+  --bg: #f3f6f4;
+  --surface: #ffffff;
+  --surface-2: #eaf0ed;
+  --ink: #10201a;
+  --ink-2: #44554e;
+  --muted: #74857e;
+  --line: #d9e2de;
+  --accent: #0b7356;
+  --accent-hover: #095e47;
+  --accent-ink: #ffffff;
+  --accent-soft: #dcf0e8;
+  --rail: #0d2a21;
+  --rail-ink: #cfe3db;
+  --rail-muted: #7fa396;
+  --rail-active: #17402f;
+  --new: #2357c9;   --new-soft: #e3ebfb;
+  --prog: #9a6205;  --prog-soft: #fbefd6;
+  --done: #2e7d4f;  --done-soft: #e0f1e6;
+  --late: #b8352a;  --late-soft: #fbe4e1;
+  --shadow: 0 1px 2px rgba(16,32,26,.06), 0 8px 24px rgba(16,32,26,.08);
+  --scrim: rgba(10,22,18,.42);
+  --f-display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Public Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0c1411; --surface: #121c18; --surface-2: #1a2621; --ink: #e4ede9; --ink-2: #a7b7b0; --muted: #7b8c85; --line: #24322c;
+  --accent: #3cc49a; --accent-hover: #5fd3ae; --accent-ink: #062018; --accent-soft: #143a2e;
+  --rail: #08110e; --rail-ink: #cfe3db; --rail-muted: #6f9286; --rail-active: #16302a;
+  --new: #7aa2ff; --new-soft: #1b2948; --prog: #f0b54a; --prog-soft: #3a2c10; --done: #5ccb8b; --done-soft: #143424; --late: #ff7a6b;
+  --late-soft: #401b17; --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.45); --scrim: rgba(0,0,0,.6); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0c1411; --surface: #121c18; --surface-2: #1a2621; --ink: #e4ede9; --ink-2: #a7b7b0; --muted: #7b8c85; --line: #24322c;
+  --accent: #3cc49a; --accent-hover: #5fd3ae; --accent-ink: #062018; --accent-soft: #143a2e;
+  --rail: #08110e; --rail-ink: #cfe3db; --rail-muted: #6f9286; --rail-active: #16302a;
+  --new: #7aa2ff; --new-soft: #1b2948; --prog: #f0b54a; --prog-soft: #3a2c10; --done: #5ccb8b; --done-soft: #143424; --late: #ff7a6b;
+  --late-soft: #401b17; --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.45); --scrim: rgba(0,0,0,.6); color-scheme: dark; }
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+h1, h2, h3 { font-family: var(--f-display); margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+h1 { font-size: 26px; font-weight: 700; }
+h2 { font-size: 17px; font-weight: 600; }
+h3 { font-size: 14px; font-weight: 600; }
+p { margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+input, textarea, select { font: inherit; color: var(--ink); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+.mono { font-family: var(--f-mono); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.num { font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+svg.i { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+svg.i.sm { width: 15px; height: 15px; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 38px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); font-weight: 600; font-size: 13.5px; white-space: nowrap; transition: background .15s, border-color .15s, transform .05s; }
+.btn:hover { background: var(--surface-2); }
+.btn:active { transform: translateY(1px); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn.ghost { border-color: transparent; background: transparent; }
+.btn.ghost:hover { background: var(--surface-2); }
+.btn.sm { height: 32px; padding: 0 10px; font-size: 13px; }
+.btn.danger { color: var(--late); }
+.btn[disabled] { opacity: .55; pointer-events: none; }
+.icon-btn { width: 34px; height: 34px; display: inline-grid; place-items: center; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); }
+.icon-btn:hover { background: var(--surface-2); color: var(--ink); }
+
+/* Pills */
+.pill { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 9px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.pill.new { color: var(--new); background: var(--new-soft); }
+.pill.progress { color: var(--prog); background: var(--prog-soft); }
+.pill.done { color: var(--done); background: var(--done-soft); }
+.pill.overdue { color: var(--late); background: var(--late-soft); }
+.pill.overdue::before { animation: blink 1.4s infinite; }
+.pill.plain { color: var(--ink-2); background: var(--surface-2); }
+.pill.plain::before { display: none; }
+.tag { display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 8px; border-radius: 6px; font-size: 12px; font-weight: 500; color: var(--ink-2); background: var(--surface-2); white-space: nowrap; }
+@keyframes blink { 50% { opacity: .25; } }
+
+/* ---------- Login ---------- */
+.login { min-height: 100%; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); }
+.login-art { background: var(--rail); color: var(--rail-ink); padding-block: 48px; padding-left: max(48px, env(safe-area-inset-left, 0px)); padding-right: 48px; display: flex; flex-direction: column; justify-content: space-between; gap: 40px; position: relative; overflow: hidden; }
+.login-art .cross { position: absolute; right: -60px; bottom: -60px; width: 340px; height: 340px; opacity: .07; }
+.login-art h1 { font-size: clamp(30px, 3.4vw, 44px); line-height: 1.08; color: #fff; max-width: 14ch; }
+.login-art p.lead { margin-top: 16px; max-width: 46ch; color: var(--rail-muted); font-size: 15px; }
+.flow { display: grid; gap: 10px; max-width: 420px; }
+.flow-step { display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: start; }
+.flow-step b { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; border: 1px solid #2b5646; font-family: var(--f-mono); font-size: 12px; color: #9fd8c3; font-weight: 500; }
+.flow-step span { padding-top: 4px; color: var(--rail-ink); }
+.flow-step small { display: block; color: var(--rail-muted); font-size: 12.5px; }
+.login-meta { display: flex; gap: 18px; flex-wrap: wrap; font-size: 12.5px; color: var(--rail-muted); }
+.login-meta span { display: inline-flex; gap: 6px; align-items: center; }
+.login-form-wrap { display: grid; place-items: center; padding-block: 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.login-card { width: 100%; max-width: 400px; display: grid; gap: 22px; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--f-display); font-weight: 700; font-size: 18px; letter-spacing: -.02em; }
+.brand-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--accent); display: grid; place-items: center; color: var(--accent-ink); }
+.login-art .brand { color: #fff; }
+.login-art .brand-mark { background: #3cc49a; color: #062018; }
+.field { display: grid; gap: 6px; }
+.field label { font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.input { height: 42px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); width: 100%; }
+.input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+textarea.input { height: auto; min-height: 96px; padding: 10px 12px; resize: vertical; line-height: 1.5; }
+.staff-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.staff-opt { display: flex; gap: 10px; align-items: center; padding: 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); text-align: left; min-width: 0; }
+.staff-opt:hover { border-color: var(--accent); }
+.staff-opt[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.staff-opt div { min-width: 0; }
+.staff-opt strong { display: block; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.staff-opt small { display: block; font-size: 11.5px; color: var(--muted); }
+.avatar { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; flex: none; color: #fff; font-family: var(--f-display); }
+.avatar.sm { width: 24px; height: 24px; font-size: 10px; }
+.otp { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.otp input { height: 52px; text-align: center; font-family: var(--f-mono); font-size: 20px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); width: 100%; min-width: 0; }
+.otp input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.hint { font-size: 12.5px; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; padding: 10px 12px; background: var(--surface-2); border-radius: 8px; }
+.err { color: var(--late); font-size: 13px; }
+
+/* ---------- Shell ---------- */
+.app { display: grid; grid-template-columns: 236px minmax(0, 1fr); min-height: 100%; }
+.rail { background: var(--rail); color: var(--rail-ink); padding: 18px 12px; display: flex; flex-direction: column; gap: 22px; position: sticky; top: 0; height: 100vh; height: 100dvh; }
+.rail .brand { color: #fff; padding: 4px 8px 0; font-size: 17px; }
+.rail .brand-mark { background: #3cc49a; color: #062018; }
+.pharm { padding: 10px 10px; border-radius: 10px; background: var(--rail-active); display: grid; gap: 2px; }
+.pharm strong { font-size: 13px; color: #fff; }
+.pharm small { font-size: 11.5px; color: var(--rail-muted); }
+.nav { display: grid; gap: 2px; }
+.nav a { display: flex; align-items: center; gap: 11px; padding: 9px 10px; border-radius: 8px; color: var(--rail-ink); text-decoration: none; font-weight: 500; }
+.nav a:hover { background: rgba(255,255,255,.05); }
+.nav a[aria-current="page"] { background: var(--rail-active); color: #fff; }
+.nav a[aria-current="page"] svg { color: #3cc49a; }
+.nav .count { margin-left: auto; font-size: 11.5px; font-weight: 700; min-width: 22px; height: 20px; padding: 0 6px; border-radius: 10px; display: grid; place-items: center; background: #3cc49a; color: #062018; }
+.nav .count.alert { background: #ff7a6b; color: #2a0805; }
+.rail-foot { margin-top: auto; display: grid; gap: 10px; }
+.live { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--rail-muted); padding: 0 10px; }
+.live-dot { width: 8px; height: 8px; border-radius: 50%; background: #3cc49a; box-shadow: 0 0 0 0 rgba(60,196,154,.6); animation: pulse 2s infinite; flex: none; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(60,196,154,.55); } 70% { box-shadow: 0 0 0 8px rgba(60,196,154,0); } 100% { box-shadow: 0 0 0 0 rgba(60,196,154,0); } }
+.me { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 10px; background: transparent; border: 0; color: var(--rail-ink); text-align: left; width: 100%; }
+.me:hover { background: rgba(255,255,255,.05); }
+.me div { min-width: 0; flex: 1; }
+.me strong { display: block; font-size: 13px; color: #fff; }
+.me small { display: block; font-size: 11.5px; color: var(--rail-muted); }
+.demo-box { border: 1px dashed #2b5646; border-radius: 10px; padding: 10px; display: grid; gap: 8px; }
+.demo-box .eyebrow { color: var(--rail-muted); }
+.demo-box button { display: flex; align-items: center; gap: 8px; width: 100%; padding: 7px 8px; border-radius: 7px; border: 0; background: rgba(255,255,255,.05); color: var(--rail-ink); font-size: 12.5px; text-align: left; }
+.demo-box button:hover { background: rgba(255,255,255,.1); }
+.switch { margin-left: auto; width: 28px; height: 16px; border-radius: 8px; background: #2b5646; position: relative; flex: none; }
+.switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: #cfe3db; transition: left .15s; }
+.switch.on { background: #3cc49a; }
+.switch.on::after { left: 14px; background: #062018; }
+
+.main { min-width: 0; padding-block: 28px 48px; padding-left: max(28px, env(safe-area-inset-left, 0px)); padding-right: max(28px, env(safe-area-inset-right, 0px)); }
+.page { max-width: 1180px; margin: 0 auto; display: grid; gap: 22px; }
+.page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.page-head .sub { color: var(--muted); margin-top: 4px; }
+.page-head .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.topbar, .tabbar { display: none; }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+.panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.panel-body { padding: 16px; }
+
+/* ---------- Tasks ---------- */
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.kpi { text-align: left; padding: 14px 16px; border-radius: var(--r); border: 1px solid var(--line); background: var(--surface); display: grid; gap: 4px; position: relative; }
+.kpi:hover { border-color: var(--muted); }
+.kpi[aria-pressed="true"] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.kpi .k-label { display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; color: var(--ink-2); }
+.kpi .k-label i { width: 8px; height: 8px; border-radius: 50%; }
+.kpi .k-val { font-family: var(--f-display); font-size: 30px; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.kpi .k-foot { font-size: 12px; color: var(--muted); }
+.kpi.overdue-hot .k-val { color: var(--late); }
+
+.incoming { display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: var(--r); background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); }
+.incoming .ring { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; animation: ring 1.2s infinite; flex: none; }
+@keyframes ring { 0%,100% { transform: rotate(0); } 10% { transform: rotate(-12deg); } 20% { transform: rotate(12deg); } 30% { transform: rotate(-8deg); } 40% { transform: rotate(0); } }
+.incoming div { min-width: 0; flex: 1; }
+.incoming strong { display: block; }
+.incoming small { color: var(--ink-2); }
+.wave { display: flex; gap: 3px; align-items: center; height: 22px; }
+.wave i { width: 3px; border-radius: 2px; background: var(--accent); animation: wv 1s infinite ease-in-out; }
+.wave i:nth-child(2) { animation-delay: .1s } .wave i:nth-child(3) { animation-delay: .2s } .wave i:nth-child(4) { animation-delay: .3s } .wave i:nth-child(5) { animation-delay: .4s }
+@keyframes wv { 0%,100% { height: 5px; } 50% { height: 20px; } }
+
+.toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.search { position: relative; flex: 1 1 240px; min-width: 0; }
+.search svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+.search input { padding-left: 36px; height: 38px; }
+.select { height: 38px; padding: 0 30px 0 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 15px) 16px, calc(100% - 10px) 16px; background-size: 5px 5px; background-repeat: no-repeat; max-width: 100%; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.seg button { border: 0; background: transparent; padding: 0 12px; height: 36px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+.tasks-head, .task { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.25fr) 112px 132px 116px 96px; gap: 14px; align-items: center; }
+.tasks-head { padding: 9px 16px 9px 20px; font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.task { padding: 12px 16px 12px 20px; border-bottom: 1px solid var(--line); cursor: pointer; position: relative; transition: background .15s; }
+.task:last-child { border-bottom: 0; border-radius: 0 0 var(--r) var(--r); }
+.task:hover { background: var(--surface-2); }
+.task::before { content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 4px; border-radius: 0 3px 3px 0; background: var(--st); }
+.task.st-new { --st: var(--new); } .task.st-progress { --st: var(--prog); } .task.st-overdue { --st: var(--late); } .task.st-done { --st: var(--line); }
+.task.st-done .t-name { color: var(--ink-2); }
+.task.flash { animation: flash 2.4s ease-out; }
+@keyframes flash { 0% { background: var(--accent-soft); } 100% { background: transparent; } }
+.t-who { min-width: 0; }
+.t-name { font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.t-name span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.t-sub { font-size: 12.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.t-type { min-width: 0; display: grid; gap: 2px; }
+.t-type .tag { justify-self: start; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.t-time { font-size: 13px; }
+.t-time small { display: block; color: var(--muted); font-size: 12px; }
+.t-due { font-size: 13px; }
+.t-due small { display: block; font-size: 12px; color: var(--muted); }
+.t-due.late small { color: var(--late); font-weight: 600; }
+.t-due.soon small { color: var(--prog); font-weight: 600; }
+.t-acts { display: flex; gap: 6px; justify-content: flex-end; }
+.t-acts .icon-btn:hover { color: var(--accent); border-color: var(--accent); }
+.badge-ph { font-size: 10.5px; font-weight: 700; letter-spacing: .04em; color: var(--prog); border: 1px solid currentColor; border-radius: 4px; padding: 0 4px; line-height: 16px; flex: none; }
+.empty { padding: 48px 16px; text-align: center; color: var(--muted); display: grid; gap: 6px; justify-items: center; }
+.empty strong { color: var(--ink); font-family: var(--f-display); font-size: 16px; }
+
+/* ---------- Drawer / modal ---------- */
+.scrim { position: fixed; inset: 0; background: var(--scrim); z-index: 40; opacity: 0; transition: opacity .2s; }
+.scrim.show { opacity: 1; }
+.drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(540px, 100%); background: var(--surface); z-index: 41; display: flex; flex-direction: column; box-shadow: var(--shadow); transform: translateX(100%); transition: transform .25s cubic-bezier(.2,.8,.2,1); padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); padding-right: env(safe-area-inset-right, 0px); }
+.drawer.show { transform: none; }
+.d-head { padding: 18px 20px 16px; border-bottom: 1px solid var(--line); display: grid; gap: 10px; }
+.d-head-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.d-head h2 { font-size: 21px; }
+.d-meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.d-body { overflow-y: auto; flex: 1; padding: 18px 20px 24px; display: grid; gap: 22px; align-content: start; }
+.d-sec { display: grid; gap: 10px; }
+.kv { display: grid; grid-template-columns: 124px minmax(0, 1fr); gap: 8px 12px; font-size: 13.5px; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.reveal { border: 0; background: none; color: var(--accent); font-weight: 600; font-size: 12.5px; padding: 0 0 0 6px; }
+.ai-box { background: var(--surface-2); border-radius: 10px; padding: 14px; display: grid; gap: 10px; }
+.ai-box .src { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.items { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.items li { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); font-size: 13.5px; }
+.items li svg { color: var(--accent); }
+.timeline { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.timeline li { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 10px; padding-bottom: 14px; position: relative; }
+.timeline li::before { content: ""; position: absolute; left: 11px; top: 24px; bottom: 0; width: 2px; background: var(--line); }
+.timeline li:last-child::before { display: none; }
+.timeline .dot { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-2); color: var(--ink-2); }
+.timeline .dot svg { width: 13px; height: 13px; }
+.timeline .tl-text { font-size: 13.5px; padding-top: 2px; }
+.timeline .tl-text small { display: block; color: var(--muted); font-size: 12px; }
+.timeline .note { margin-top: 6px; padding: 8px 10px; border-radius: 8px; background: var(--prog-soft); color: var(--ink); font-size: 13px; white-space: pre-wrap; }
+.d-foot { border-top: 1px solid var(--line); padding: 12px 20px; display: flex; gap: 8px; flex-wrap: wrap; background: var(--surface); }
+.d-foot .btn.primary { flex: 1 1 180px; }
+
+.modal { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.modal-card { width: 100%; max-width: 460px; background: var(--surface); border-radius: 14px; box-shadow: var(--shadow); display: grid; gap: 16px; padding: 20px; position: relative; z-index: 1; max-height: 90vh; overflow-y: auto; animation: pop .18s ease-out; }
+@keyframes pop { from { transform: translateY(8px); opacity: 0; } }
+.modal .scrim { opacity: 1; z-index: 0; }
+.sms-phone { background: var(--surface-2); border-radius: 12px; padding: 14px; display: grid; gap: 8px; }
+.sms-bubble { background: var(--accent); color: var(--accent-ink); padding: 10px 12px; border-radius: 14px 14px 4px 14px; font-size: 13.5px; justify-self: end; max-width: 92%; white-space: pre-wrap; }
+.sms-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); gap: 8px; flex-wrap: wrap; }
+.opt-list { display: grid; gap: 8px; }
+.opt { display: flex; gap: 10px; align-items: center; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); text-align: left; }
+.opt:hover { border-color: var(--accent); }
+.opt[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.opt small { display: block; color: var(--muted); font-size: 12px; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+
+/* ---------- Toasts / tooltip ---------- */
+.toasts { position: fixed; right: max(20px, env(safe-area-inset-right, 0px)); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 60; display: grid; gap: 8px; width: min(380px, calc(100% - 32px)); }
+.toast { background: var(--ink); color: var(--bg); padding: 12px 14px; border-radius: 10px; box-shadow: var(--shadow); display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; animation: pop .2s ease-out; }
+.toast div { flex: 1; min-width: 0; }
+.toast small { display: block; opacity: .7; font-size: 12px; overflow-wrap: anywhere; }
+.toast button { border: 0; background: transparent; color: inherit; font-weight: 700; text-decoration: underline; padding: 0; }
+.toast .tic { color: #3cc49a; margin-top: 1px; }
+.tip { position: fixed; z-index: 70; pointer-events: none; background: var(--ink); color: var(--bg); padding: 7px 10px; border-radius: 8px; font-size: 12.5px; box-shadow: var(--shadow); transform: translate(-50%, calc(-100% - 10px)); white-space: nowrap; }
+.tip b { font-variant-numeric: tabular-nums; }
+
+/* ---------- Calls ---------- */
+.calls-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 16px; align-items: start; }
+.call-row { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); cursor: pointer; align-items: center; background: none; border-left: 0; border-right: 0; border-top: 0; text-align: left; width: 100%; }
+.call-row:hover { background: var(--surface-2); }
+.call-row[aria-current="true"] { background: var(--accent-soft); }
+.call-row .c-time { font-family: var(--f-mono); font-size: 12.5px; color: var(--ink-2); }
+.call-row .c-main { min-width: 0; }
+.call-row .c-main strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.call-row .c-main small { display: block; color: var(--muted); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.c-right { display: grid; justify-items: end; gap: 4px; }
+.calls-list { max-height: 720px; overflow-y: auto; }
+.call-detail { position: sticky; top: 20px; }
+.player { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; background: var(--surface-2); }
+.play { width: 38px; height: 38px; border-radius: 50%; border: 0; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; flex: none; }
+.play svg { fill: currentColor; stroke: none; }
+.bars { flex: 1; display: flex; align-items: center; gap: 2px; height: 34px; min-width: 0; overflow: hidden; }
+.bars i { flex: 1; min-width: 2px; border-radius: 2px; background: var(--line); }
+.bars i.on { background: var(--accent); }
+.transcript { display: grid; gap: 10px; max-height: 360px; overflow-y: auto; padding-right: 4px; }
+.msg { display: grid; gap: 3px; max-width: 88%; }
+.msg small { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+.msg p { padding: 9px 12px; border-radius: 12px; font-size: 13.5px; }
+.msg.agent p { background: var(--surface-2); border-top-left-radius: 4px; }
+.msg.caller { justify-self: end; }
+.msg.caller small { text-align: right; }
+.msg.caller p { background: var(--accent-soft); border-top-right-radius: 4px; }
+.links { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ---------- Reports ---------- */
+.stat-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.stat { padding: 16px; border-radius: var(--r); background: var(--surface); border: 1px solid var(--line); display: grid; gap: 2px; }
+.stat .s-val { font-family: var(--f-display); font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.15; }
+.stat .s-val small { font-size: 16px; font-weight: 600; color: var(--muted); }
+.stat .s-label { font-size: 12.5px; color: var(--ink-2); font-weight: 600; }
+.stat .s-foot { font-size: 12px; color: var(--muted); }
+.meter { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; margin-top: 8px; }
+.meter i { display: block; height: 100%; background: var(--accent); border-radius: 3px; }
+.charts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+.charts .wide { grid-column: 1 / -1; }
+.hbars { display: grid; gap: 10px; }
+.hbar { display: grid; grid-template-columns: 170px minmax(0, 1fr) 40px; gap: 12px; align-items: center; font-size: 13px; }
+.hbar .lbl { color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hbar .track { height: 18px; position: relative; }
+.hbar .fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); border-radius: 0 4px 4px 0; min-width: 3px; transition: width .4s; }
+.hbar .val { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.hbar:hover .fill { background: var(--accent-hover); }
+.cols { position: relative; height: 200px; margin-left: 34px; margin-top: 8px; }
+.cols .grid-l { position: absolute; left: 0; right: 0; border-top: 1px solid var(--line); }
+.cols .grid-l span { position: absolute; left: -34px; top: -8px; width: 28px; text-align: right; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.cols .target { position: absolute; left: 0; right: 0; border-top: 1.5px dashed var(--ink-2); z-index: 2; }
+.cols .target span { position: absolute; right: 0; top: -18px; font-size: 11px; font-weight: 600; color: var(--ink-2); background: var(--surface); padding: 0 4px; }
+.cols .bars-c { position: absolute; inset: 0; display: flex; align-items: flex-end; gap: 2px; }
+.cols .col { flex: 1; height: 100%; display: flex; align-items: flex-end; justify-content: center; cursor: default; }
+.cols .col i { display: block; width: min(70%, 34px); background: var(--accent); border-radius: 4px 4px 0 0; min-height: 2px; transition: height .4s; }
+.cols .col:hover i { background: var(--accent-hover); }
+.cols .col.now i { background: var(--accent); }
+.cols .col.dim i { opacity: .35; }
+.x-axis { display: flex; gap: 2px; margin-left: 34px; margin-top: 6px; }
+.x-axis span { flex: 1; text-align: center; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 10px; height: 10px; border-radius: 3px; background: var(--accent); }
+.legend i.dash { height: 0; border-top: 2px dashed var(--ink-2); background: none; border-radius: 0; width: 14px; }
+
+/* ---------- Audit ---------- */
+.table-wrap { overflow-x: auto; }
+table.tbl { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 820px; }
+.tbl th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); padding: 9px 14px; background: var(--surface-2); border-bottom: 1px solid var(--line); white-space: nowrap; }
+.tbl td { padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.tbl tr:last-child td { border-bottom: 0; }
+.tbl tr.fresh td { animation: flash 2.4s ease-out; }
+.who { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.act { font-weight: 600; }
+.act-k { display: inline-block; font-family: var(--f-mono); font-size: 11px; padding: 1px 6px; border-radius: 4px; background: var(--surface-2); color: var(--ink-2); margin-right: 6px; }
+.chain { color: var(--muted); }
+.callout { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: var(--r); background: var(--surface); border: 1px solid var(--line); }
+.callout svg { color: var(--accent); margin-top: 1px; }
+.callout p { color: var(--ink-2); font-size: 13.5px; max-width: 90ch; }
+
+/* ---------- Connections ---------- */
+.conn-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.conn-stack { display: grid; gap: 16px; }
+.endpoint { display: flex; align-items: center; gap: 8px; padding: 8px 8px 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); min-width: 0; }
+.endpoint code { font-family: var(--f-mono); font-size: 12.5px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.method { font-family: var(--f-mono); font-size: 11px; font-weight: 600; color: var(--accent-ink); background: var(--accent); border-radius: 4px; padding: 2px 6px; }
+.checks { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.checks li { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; }
+.checks li svg { color: var(--done); margin-top: 2px; }
+.checks li small { display: block; color: var(--muted); font-size: 12.5px; }
+.evt { border-bottom: 1px solid var(--line); }
+.evt:last-child { border-bottom: 0; }
+.evt summary { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 10px; padding: 10px 16px; cursor: pointer; align-items: center; list-style: none; }
+.evt summary::-webkit-details-marker { display: none; }
+.evt summary:hover { background: var(--surface-2); }
+.evt summary .mono { color: var(--ink-2); }
+.evt summary strong { font-family: var(--f-mono); font-size: 12.5px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.code200 { font-family: var(--f-mono); font-size: 11.5px; color: var(--done); background: var(--done-soft); padding: 1px 7px; border-radius: 4px; }
+.evt pre { margin: 0; padding: 12px 16px; background: var(--surface-2); font-family: var(--f-mono); font-size: 11.5px; line-height: 1.55; overflow-x: auto; color: var(--ink-2); max-height: 300px; }
+.kv-tight { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; font-size: 13.5px; }
+.kv-tight span:nth-child(odd) { color: var(--ink-2); }
+.kv-tight span:nth-child(even) { font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+.svc-head { display: flex; align-items: center; gap: 12px; }
+.svc-logo { width: 36px; height: 36px; border-radius: 9px; display: grid; place-items: center; background: var(--surface-2); color: var(--accent); flex: none; }
+.ok-badge { margin-left: auto; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1100px) {
+  .tasks-head, .task { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.2fr) 124px 110px 84px; }
+  .tasks-head .h-recv, .task .t-time { display: none; }
+  .calls-grid, .conn-grid { grid-template-columns: minmax(0, 1fr); }
+  .call-detail { position: static; }
+}
+@media (max-width: 860px) {
+  .app { grid-template-columns: minmax(0, 1fr); }
+  .rail { display: none; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--rail); color: #fff; padding-block: 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  body::before { background: var(--rail); }
+  .topbar .brand { color: #fff; font-size: 16px; }
+  .topbar .brand-mark { background: #3cc49a; color: #062018; width: 26px; height: 26px; }
+  .topbar .tb-right { display: flex; align-items: center; gap: 10px; }
+  .topbar .live { padding: 0; }
+  .topbar .me { padding: 0; width: auto; }
+  .tabbar { display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: var(--surface); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); }
+  .tabbar a { display: grid; justify-items: center; gap: 2px; padding: 8px 2px 7px; font-size: 11px; font-weight: 600; color: var(--muted); text-decoration: none; position: relative; }
+  .tabbar a[aria-current="page"] { color: var(--accent); }
+  .tabbar a .count { position: absolute; top: 4px; left: calc(50% + 6px); font-size: 10px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; background: var(--late); color: #fff; display: grid; place-items: center; }
+  .main { padding-block: 18px calc(90px + env(safe-area-inset-bottom, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .toasts { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+  h1 { font-size: 22px; }
+  .kpis, .stat-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .charts { grid-template-columns: minmax(0, 1fr); }
+  .tasks-head { display: none; }
+  .task { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "who status" "type due"; gap: 6px 12px; padding: 12px 14px 12px 18px; }
+  .task .t-who { grid-area: who; } .task .t-type { grid-area: type; } .task .t-due { grid-area: due; text-align: right; } .task .t-status { grid-area: status; justify-self: end; } .task .t-acts { display: none; }
+  .task .t-type .t-sub { display: none; }
+  .login { grid-template-columns: minmax(0, 1fr); }
+  .login-art { display: none; }
+  .drawer { width: 100%; }
+  .modal { align-items: end; padding: 0; }
+  .modal-card { border-radius: 16px 16px 0 0; max-width: none; padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)); }
+  .hbar { grid-template-columns: 118px minmax(0, 1fr) 32px; }
+  .kv { grid-template-columns: 104px minmax(0, 1fr); }
+}
+@media (max-width: 420px) { .staff-pick { grid-template-columns: minmax(0, 1fr); } .kpi .k-val { font-size: 26px; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)} body{margin:0} [hidden]{display:none!important} img{max-width:100%}</style>
+</head>
+<body>
+
+<div id="root"></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<div class="tip" id="tip" hidden></div>
+
+<script>
+(() => {
+"use strict";
+
+/* ================= Icons ================= */
+const P = {
+  list: '<path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/>',
+  phone: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/>',
+  phoneBack: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/><path d="M14 2v6h6M20 2l-6 6"/>',
+  chart: '<path d="M3 3v18h18"/><path d="M7 15v3M12 10v8M17 6v12"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>',
+  plug: '<path d="M9 2v6M15 2v6M6 8h12v4a6 6 0 0 1-12 0V8zM12 18v4"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  msg: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  note: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  x: '<path d="M18 6 6 18M6 6l12 12"/>',
+  refresh: '<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>',
+  play: '<path d="M8 5v14l11-7z"/>',
+  pause: '<path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/>',
+  logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  pill: '<path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7z"/><path d="m8.5 8.5 7 7"/>',
+  spark: '<path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>',
+  lock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  copy: '<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  ext: '<path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+  server: '<rect x="3" y="3" width="18" height="7" rx="2"/><rect x="3" y="14" width="18" height="7" rx="2"/><path d="M7 6.5h.01M7 17.5h.01"/>',
+  reopen: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',
+  start: '<circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z"/>',
+  moon: '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+  bolt: '<path d="M13 2 3 14h9l-1 8 10-12h-9z"/>',
+};
+const ic = (n, cls = "") => `<svg class="i ${cls}" viewBox="0 0 24 24" aria-hidden="true">${P[n]}</svg>`;
+const CROSS = '<svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/></svg>';
+
+/* ================= Helpers ================= */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const MIN = 60000;
+const now = () => Date.now();
+const pad = n => String(n).padStart(2, "0");
+const fmtTime = ts => { const d = new Date(ts); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const fmtTimeS = ts => { const d = new Date(ts); return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`; };
+const fmtDay = ts => new Date(ts).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+const isToday = ts => new Date(ts).toDateString() === new Date().toDateString();
+const fmtStamp = ts => (isToday(ts) ? "Today" : fmtDay(ts)) + " " + fmtTime(ts);
+const dur = m => { m = Math.round(Math.abs(m)); if (m < 60) return m + "m"; const h = Math.floor(m / 60), r = m % 60; if (h >= 24) { const d = Math.floor(h / 24); return d + "d " + (h % 24) + "h"; } return h + "h" + (r ? " " + r + "m" : ""); };
+const ago = ts => { const m = (now() - ts) / MIN; if (m < 1) return "just now"; return dur(m) + " ago"; };
+const secs = s => `${Math.floor(s / 60)}:${pad(s % 60)}`;
+const hex = n => { let s = ""; for (let i = 0; i < n; i++) s += "0123456789abcdef"[Math.floor(Math.random() * 16)]; return s; };
+const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const fnv = str => { let h = 0x811c9dc5; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, "0"); };
+const maskPhone = p => p.slice(0, 5) + " ••• " + p.slice(-3);
+const dobLong = d => new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+const age = d => Math.floor((now() - new Date(d)) / (365.25 * 24 * 60 * MIN));
+const firstName = n => n.split(" ")[0];
+
+/* ================= Reference data ================= */
+const PHARMACY = { name: "Harbourside Pharmacy", addr: "14 Quay Street, Bristol BS1 4DJ", ods: "FQ842", phone: "0117 496 0732", hours: "9am to 6:30pm" };
+const STAFF = [
+  { id: "ps", name: "Priya Shah", role: "Pharmacist", email: "priya.shah@harbourside-demo.co.uk", color: "#0b7356" },
+  { id: "tr", name: "Tom Reid", role: "Dispenser", email: "tom.reid@harbourside-demo.co.uk", color: "#2357c9" },
+  { id: "ab", name: "Aisha Begum", role: "Pharmacy technician", email: "aisha.begum@harbourside-demo.co.uk", color: "#9a3b8f" },
+  { id: "do", name: "Daniel Okafor", role: "Counter assistant", email: "daniel.okafor@harbourside-demo.co.uk", color: "#b25a12" },
+];
+const staff = id => STAFF.find(s => s.id === id) || { id: "sys", name: "System", role: "Automation", color: "#74857e" };
+const initials = n => n.split(" ").map(w => w[0]).join("").slice(0, 2);
+const av = (id, sm = true) => { const s = staff(id); return `<span class="avatar ${sm ? "sm" : ""}" style="background:${s.color}">${s.id === "sys" ? ic("bolt", "sm") : initials(s.name)}</span>`; };
+
+const TYPES = {
+  repeat:   { label: "Repeat prescription", sla: 48 * 60, ready: true },
+  ready:    { label: "Is my prescription ready?", sla: 60, ready: true },
+  question: { label: "Medication question", sla: 120, pharmacist: true },
+  delivery: { label: "Home delivery", sla: 240, ready: true },
+  pfirst:   { label: "Pharmacy First consultation", sla: 90, pharmacist: true },
+  vaccine:  { label: "Vaccination booking", sla: 24 * 60 },
+  stock:    { label: "Stock check", sla: 180, ready: true },
+};
+const INFO_REASONS = ["Opening hours", "Directions and parking", "Transferred to staff"];
+
+/* ================= Seed data ================= */
+const SEED_TASKS = [
+  { name: "Margaret Ellis", dob: "1948-03-14", phone: "07700900412", nhs: "943 476 5919", type: "repeat", ago: 8, due: 172, st: "new",
+    items: ["Amlodipine 5mg tablets × 28", "Atorvastatin 20mg tablets × 28"],
+    said: "Hello love, I need to order my repeat, my blood pressure ones and the cholesterol tablets.",
+    summary: "Repeat request for amlodipine 5mg and atorvastatin 20mg. Patient asked for a text when ready to collect. Nominated surgery: Clifton Medical Centre." },
+  { name: "Kwame Mensah", dob: "1979-11-02", phone: "07700900187", nhs: "485 777 3456", type: "ready", ago: 14, due: 46, st: "new",
+    items: ["Metformin 500mg tablets × 56"],
+    said: "Hi, I dropped a prescription off yesterday for metformin and wanted to check if it's ready.",
+    summary: "Checking on metformin 500mg handed in yesterday afternoon. Wants a text when it's ready, plans to collect after work." },
+  { name: "Eileen O'Connor", dob: "1941-07-22", phone: "07700900655", nhs: "401 023 2137", type: "delivery", ago: 95, due: -20, st: "progress", owner: "tr",
+    items: ["Levothyroxine 50mcg tablets × 28", "Omeprazole 20mg capsules × 28"],
+    said: "I can't get out at the moment with my hip, could someone bring my tablets round?",
+    summary: "Housebound after hip surgery. Requests home delivery of levothyroxine and omeprazole. Address on file confirmed. Prefers morning delivery." },
+  { name: "Harjit Singh", dob: "1966-01-30", phone: "07700900233", nhs: "612 994 1205", type: "question", ago: 31, due: 29, st: "new",
+    items: ["Ramipril 2.5mg capsules"],
+    said: "I started ramipril two weeks ago and I've had this dry cough that won't go away. Is that normal?",
+    summary: "Persistent dry cough since starting ramipril 2.5mg two weeks ago. No breathing difficulty or swelling reported. Asked for a pharmacist to call back." },
+  { name: "Fatima Rahman", dob: "1991-05-09", phone: "07700900921", nhs: "737 150 8861", type: "pfirst", ago: 22, due: 38, st: "progress", owner: "ps",
+    items: ["Sore throat, 3 days"],
+    said: "I've had a really bad sore throat for three days, my GP said the pharmacy might be able to help.",
+    summary: "Sore throat for 3 days, temperature last night. No difficulty swallowing saliva. Suitable for a Pharmacy First assessment. Can come in this afternoon." },
+  { name: "Gareth Price", dob: "1957-09-18", phone: "07700900348", nhs: "512 380 0469", type: "vaccine", ago: 120, due: 240, st: "new",
+    items: ["Flu vaccine", "COVID-19 autumn booster"],
+    said: "Can I book in for my flu jab, and the COVID one as well if you're doing them?",
+    summary: "Wants flu and COVID-19 autumn booster together. Eligible by age (69). Prefers Thursday or Friday morning." },
+  { name: "Joan Whitaker", dob: "1938-12-04", phone: "07700900560", nhs: "320 117 4485", type: "repeat", ago: 180, due: -45, st: "new",
+    items: ["Bisoprolol 2.5mg tablets × 28", "Furosemide 40mg tablets × 28", "Apixaban 5mg tablets × 56"],
+    said: "It's Joan, I need my usual three, the heart ones. I'm down to my last couple.",
+    summary: "Repeat for bisoprolol, furosemide and apixaban. Patient says she has 2 days of apixaban left. Flagged as urgent by the assistant." },
+  { name: "Liam Fraser", dob: "1984-04-27", phone: "07700900774", nhs: "698 233 7510", type: "stock", ago: 60, due: 60, st: "progress", owner: "ab",
+    items: ["Estradiol 50mcg patches × 8"],
+    said: "My wife's HRT patches were out of stock last time. Do you have them in now?",
+    summary: "Stock check for estradiol 50mcg patches for spouse's prescription. Previous supply was owed. Wants a text if in stock today." },
+  { name: "Chloe Bennett", dob: "1998-08-15", phone: "07700900109", nhs: "450 671 2298", type: "ready", ago: 75, due: 15, st: "new",
+    items: ["Salbutamol 100mcg inhaler × 1", "Clenil Modulite 100mcg inhaler × 1"],
+    said: "Just checking if my inhalers are ready? The surgery said they sent it over this morning.",
+    summary: "Checking on two inhalers sent electronically by the surgery this morning. Collecting on the way home, around 5pm." },
+  { name: "Peter Walsh", dob: "1952-02-11", phone: "07700900832", nhs: "889 120 4417", type: "repeat", ago: 210, due: 2600, st: "done", owner: "ps", closedAgo: 40, close: "sms",
+    items: ["Simvastatin 40mg tablets × 28"], said: "Repeat for my simvastatin please.", summary: "Repeat for simvastatin 40mg. Text when ready." },
+  { name: "Ann Kowalski", dob: "1970-10-03", phone: "07700900291", nhs: "556 902 1183", type: "ready", ago: 160, due: -100, st: "done", owner: "tr", closedAgo: 110, close: "sms",
+    items: ["Sertraline 50mg tablets × 28"], said: "Is my sertraline ready to pick up?", summary: "Checking on sertraline 50mg. Will collect at lunch." },
+  { name: "Mohammed Iqbal", dob: "1945-06-21", phone: "07700900467", nhs: "702 445 9320", type: "delivery", ago: 260, due: -20, st: "done", owner: "ab", closedAgo: 150, close: "sms",
+    items: ["Insulin glargine pens × 5"], said: "My son usually collects but he's away, can you deliver?", summary: "Delivery of insulin glargine pens. Cold-chain bag needed." },
+  { name: "Sophie Marsh", dob: "1988-03-29", phone: "07700900718", nhs: "381 664 0072", type: "question", ago: 300, due: -180, st: "done", owner: "ps", closedAgo: 165, close: "call",
+    items: ["Ibuprofen with naproxen"], said: "Can I take ibuprofen while I'm on naproxen?", summary: "Asked about combining ibuprofen with prescribed naproxen. Advised by pharmacist not to combine." },
+  { name: "Rachel Doyle", dob: "1961-01-08", phone: "07700900504", nhs: "214 887 3301", type: "vaccine", ago: 320, due: 1120, st: "done", owner: "do", closedAgo: 230, close: "call",
+    items: ["Flu vaccine"], said: "I'd like to book a flu jab please.", summary: "Booked flu jab for Saturday 10:15." },
+];
+
+const SIM_POOL = [
+  { name: "Brian Atkinson", dob: "1950-05-17", phone: "07700900906", nhs: "604 118 2273", type: "repeat", items: ["Lansoprazole 30mg capsules × 28", "Amitriptyline 10mg tablets × 28"], said: "I'd like to order my repeat prescription, the stomach ones and the ones for sleep.", summary: "Repeat for lansoprazole 30mg and amitriptyline 10mg. Wants a text when ready." },
+  { name: "Grace Adeyemi", dob: "1993-12-12", phone: "07700900377", nhs: "731 220 6684", type: "pfirst", items: ["Earache, 2 days"], said: "My little boy has had earache since Sunday, can the pharmacist look at him?", summary: "Child aged 6 with earache for 2 days, mild temperature. Suitable for Pharmacy First (acute otitis media). Parent can attend today." },
+  { name: "Derek Holloway", dob: "1944-08-03", phone: "07700900588", nhs: "377 091 4462", type: "delivery", items: ["Warfarin 1mg tablets × 28", "Warfarin 3mg tablets × 28"], said: "Could you deliver my warfarin? I've not got a lift this week.", summary: "Home delivery of warfarin 1mg and 3mg. INR booklet up to date. Afternoon delivery preferred." },
+  { name: "Nadia Petrova", dob: "1986-02-24", phone: "07700900145", nhs: "820 556 7731", type: "ready", items: ["Citalopram 20mg tablets × 28"], said: "Hi, is my citalopram ready? I'm nearly out.", summary: "Checking on citalopram 20mg. Has 1 day left. Will collect today." },
+  { name: "Owen Llewellyn", dob: "1972-06-30", phone: "07700900699", nhs: "263 940 1158", type: "question", items: ["Amoxicillin 500mg capsules"], said: "I've been given amoxicillin. Can I still have a drink at my brother's wedding on Saturday?", summary: "Asking about alcohol with amoxicillin 500mg course. No other medicines. Asked for a pharmacist to call back." },
+  { name: "Hannah Clarke", dob: "1959-11-19", phone: "07700900251", nhs: "915 302 4479", type: "vaccine", items: ["COVID-19 autumn booster"], said: "Can I book my COVID booster? I had the flu one at my GP.", summary: "COVID-19 autumn booster booking. Flu vaccine already given at GP. Any weekday afternoon." },
+  { name: "Samuel Osei", dob: "1981-03-07", phone: "07700900833", nhs: "448 213 9906", type: "stock", items: ["Methylphenidate XL 36mg tablets × 30"], said: "Do you have methylphenidate 36mg in? Two other pharmacies didn't.", summary: "Stock check for methylphenidate XL 36mg (Schedule 2 CD). Prescription held by patient. Wants a call or text today." },
+];
+
+const OPENERS = [
+  `Good morning, you're through to ${PHARMACY.name}. I'm the pharmacy's automated assistant, and this call is recorded. How can I help?`,
+];
+const CLOSERS = {
+  repeat: t => `Thank you. I've passed your request for ${t.items.length > 1 ? "those items" : "that item"} to the team. Repeats usually take two working days from the surgery, and we'll text you on the number ending ${t.phone.slice(-3)} when it's ready to collect.`,
+  ready: t => `Thanks. I've asked the dispensary team to check on it now. We'll send a text to the number ending ${t.phone.slice(-3)} as soon as it's ready.`,
+  question: () => `That's a good question for the pharmacist. I've asked them to call you back, usually within two hours. If symptoms get worse, call 111 or speak to your GP.`,
+  delivery: () => `No problem. I've requested a delivery and the team will confirm a time with you by text.`,
+  pfirst: () => `It sounds like this could be seen under the Pharmacy First service. A pharmacist will call you back shortly to arrange a consultation.`,
+  vaccine: () => `Lovely. I've passed that on and the team will text you to confirm an appointment time.`,
+  stock: () => `I've asked the team to check our stock and with our wholesaler. We'll text you with an answer today.`,
+};
+function makeTranscript(t) {
+  return [
+    { who: "agent", text: OPENERS[0] },
+    { who: "caller", text: t.said },
+    { who: "agent", text: "I can help with that. Can I take your full name and date of birth, please?" },
+    { who: "caller", text: `It's ${t.name}, ${dobLong(t.dob)}.` },
+    { who: "agent", text: `Thank you, ${firstName(t.name)}. I have your record. Just to confirm, that's ${t.items.join(" and ").toLowerCase()}?` },
+    { who: "caller", text: "Yes, that's right." },
+    { who: "agent", text: CLOSERS[t.type](t) },
+    { who: "caller", text: "Brilliant, thank you." },
+    { who: "agent", text: "You're welcome. Goodbye." },
+  ];
+}
+function infoTranscript(reason) {
+  const lines = {
+    "Opening hours": ["What time are you open until today?", `We're open ${PHARMACY.hours} today, and 9am to 1pm on Saturday.`],
+    "Directions and parking": ["Is there parking near you?", "Yes, there's a pay-and-display car park on Prince Street, about two minutes' walk away. We're opposite the harbour ferry stop."],
+    "Transferred to staff": ["I need to talk to someone about my mum's blister packs, it's a bit complicated.", "Of course. I'll put you through to a member of the team now."],
+  }[reason];
+  return [{ who: "agent", text: OPENERS[0] }, { who: "caller", text: lines[0] }, { who: "agent", text: lines[1] }, { who: "caller", text: "Okay, thanks very much." }];
+}
+const CALLER_NUMS = ["07700900011", "07700900620", "07700900738", "07700900094", "07700900452", "07700900861", "07700900277", "07700900319", "07700900990", "07700900543", "07700900170"];
+
+function retellId() { return "call_" + hex(24); }
+
+function seedState() {
+  const t0 = now();
+  const s = { v: 3, seededAt: t0, user: null, seq: 1042, tasks: [], calls: [], audit: [], sms: [], hooks: [], autoSim: true, simIdx: 0 };
+  // Tasks + their calls
+  SEED_TASKS.forEach(d => {
+    const id = "T-" + (s.seq++);
+    const created = t0 - d.ago * MIN - rnd(0, 50) * 1000;
+    const callId = retellId();
+    const durS = rnd(70, 190);
+    const task = { id, patient: { name: d.name, dob: d.dob, phone: d.phone, nhs: d.nhs }, type: d.type, items: d.items, said: d.said, summary: d.summary,
+      createdAt: created, dueAt: t0 + d.due * MIN, status: d.st, owner: d.owner || null, callId, closedAt: null, closedBy: null, closeHow: null, events: [] };
+    task.events.push({ at: created, by: "sys", kind: "create", text: "Task created from AI call" });
+    if (d.owner) task.events.push({ at: created + rnd(4, 15) * MIN, by: d.owner, kind: "start", text: "Started working on this" });
+    if (d.st === "done") {
+      task.closedAt = t0 - d.closedAgo * MIN; task.closedBy = d.owner; task.closeHow = d.close;
+      task.events.push(d.close === "sms"
+        ? { at: task.closedAt, by: d.owner, kind: "sms", text: `Marked ready. Text sent to ${maskPhone(d.phone)}` }
+        : { at: task.closedAt, by: d.owner, kind: "call", text: "Called back. Spoke to patient, resolved" });
+      if (d.close === "sms") s.sms.push({ at: task.closedAt, to: d.phone, sid: "SM" + hex(32), status: "delivered", taskId: id });
+    }
+    if (d.name === "Eileen O'Connor") task.events.push({ at: t0 - 40 * MIN, by: "tr", kind: "note", text: "Driver out on the north route until 1pm. Phoned patient, she's fine with early afternoon." });
+    s.tasks.push(task);
+    s.calls.push({ id: callId, at: created - durS * 1000, from: d.phone, caller: d.name, reason: TYPES[d.type].label, durS, outcome: "Task created", taskId: id,
+      summary: d.summary, transcript: makeTranscript({ ...d, phone: d.phone }), sentiment: d.type === "question" ? "Neutral" : "Positive" });
+    s.hooks.push(hookEvent(callId, created, d, durS));
+  });
+  // Info-only calls
+  for (let i = 0; i < 11; i++) {
+    const reason = INFO_REASONS[i % 3];
+    const at = t0 - rnd(5, 330) * MIN;
+    const durS = rnd(25, 80);
+    s.calls.push({ id: retellId(), at, from: CALLER_NUMS[i], caller: "Unknown caller", reason, durS,
+      outcome: reason === "Transferred to staff" ? "Transferred" : "Answered by AI", taskId: null,
+      summary: reason === "Opening hours" ? "Caller asked about today's opening hours. Answered by the assistant." : reason === "Directions and parking" ? "Caller asked for parking near the pharmacy. Directed to Prince Street car park." : "Caller needed help with a relative's blister packs. Transferred to the dispensary line.",
+      transcript: infoTranscript(reason), sentiment: "Positive" });
+  }
+  s.calls.push({ id: retellId(), at: t0 - 52 * MIN, from: "07700900666", caller: "Unknown caller", reason: "Transferred to staff", durS: 9, outcome: "Caller hung up", taskId: null, summary: "Caller hung up during the greeting.", transcript: [{ who: "agent", text: OPENERS[0] }], sentiment: "Unknown" });
+  s.calls.sort((a, b) => b.at - a.at);
+  // Audit history
+  const A = (minsAgo, by, action, target, detail) => s.audit.push({ at: t0 - minsAgo * MIN, by, action, target, detail, ip: ipFor(by) });
+  A(340, "ps", "auth.login", "Session", "Signed in with password and authenticator code");
+  A(335, "tr", "auth.login", "Session", "Signed in with password and authenticator code");
+  A(330, "ab", "auth.login", "Session", "Signed in with password and authenticator code");
+  A(300, "do", "auth.login", "Session", "Signed in with password and authenticator code");
+  s.tasks.forEach(t => t.events.forEach(e => {
+    const map = { create: ["task.create", "Created from Retell webhook (call_analyzed)"], start: ["task.start", "Status changed: New → In progress"], sms: ["sms.send", `Text sent via Twilio to ${maskPhone(t.patient.phone)}. Task closed`], call: ["task.callback", "Logged call-back: resolved. Task closed"], note: ["task.note", "Added a note"] }[e.kind];
+    if (map) s.audit.push({ at: e.at, by: e.by, action: map[0], target: t.id, detail: map[1], ip: ipFor(e.by) });
+  }));
+  A(128, "ps", "patient.view_phone", "T-1046", "Revealed full phone number");
+  A(62, "tr", "patient.view_phone", "T-1044", "Revealed full phone number");
+  s.audit.sort((a, b) => a.at - b.at);
+  rechain(s);
+  return s;
+}
+function ipFor(by) { return by === "sys" ? "Retell webhook" : { ps: "Dispensary PC 1", tr: "Dispensary PC 2", ab: "iPad (counter)", do: "Counter PC" }[by] || "Web"; }
+function rechain(s) { let prev = "00000000"; s.audit.forEach(e => { e.hash = fnv(prev + e.at + e.by + e.action + e.target + e.detail); prev = e.hash; }); }
+function hookEvent(callId, at, d, durS) {
+  return { id: "evt_" + hex(16), at, type: "call_analyzed", status: 200, ms: rnd(48, 140), callId,
+    payload: { event: "call_analyzed", call: { call_id: callId, agent_id: "agent_7c1e0f4a9b", call_status: "ended", from_number: "+44" + d.phone.slice(1), to_number: "+441174960732",
+      start_timestamp: at - durS * 1000, end_timestamp: at, duration_ms: durS * 1000, recording_url: `https://recordings.example/${callId}.wav`,
+      call_analysis: { call_summary: d.summary, user_sentiment: "Positive", call_successful: true,
+        custom_analysis_data: { patient_name: d.name, date_of_birth: d.dob, request_type: d.type, items: d.items, callback_number: "+44" + d.phone.slice(1), sms_consent: true } } } } };
+}
+
+/* ================= State ================= */
+const KEY = "counterline-demo-v3";
+let S;
+try { S = JSON.parse(localStorage.getItem(KEY)); } catch (e) { S = null; }
+if (!S || S.v !== 3 || now() - S.seededAt > 8 * 60 * MIN) S = seedState();
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+const UI = { filter: "open", q: "", type: "all", openTask: null, callSel: null, range: "today", auditWho: "all", auditKind: "all", revealed: {}, incoming: null, playing: false, playPos: 0, flash: null };
+
+const statusOf = t => t.status === "done" ? "done" : (t.dueAt < now() ? "overdue" : t.status);
+const STLABEL = { new: "New", progress: "In progress", overdue: "Overdue", done: "Done" };
+const pillHTML = st => `<span class="pill ${st}">${STLABEL[st]}</span>`;
+
+function audit(action, target, detail, by = S.user) {
+  const prev = S.audit.length ? S.audit[S.audit.length - 1].hash : "00000000";
+  const e = { at: now(), by, action, target, detail, ip: ipFor(by) };
+  e.hash = fnv(prev + e.at + e.by + e.action + e.target + e.detail);
+  e.fresh = true;
+  S.audit.push(e);
+}
+
+/* ================= Toasts & tooltip ================= */
+function toast(title, sub = "", opts = {}) {
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.innerHTML = `<span class="tic">${ic(opts.icon || "check", "sm")}</span><div><strong>${esc(title)}</strong>${sub ? `<small>${esc(sub)}</small>` : ""}</div>${opts.action ? `<button type="button">${esc(opts.action)}</button>` : ""}`;
+  $("#toasts").appendChild(el);
+  let done = false;
+  const close = () => { if (done) return; done = true; el.remove(); opts.onExpire && opts.onExpire(); };
+  if (opts.action) $("button", el).onclick = () => { done = true; el.remove(); opts.onAction(); };
+  setTimeout(close, opts.ms || 4200);
+  return el;
+}
+const tip = $("#tip");
+document.addEventListener("mouseover", e => { const t = e.target.closest("[data-tip]"); if (!t) { tip.hidden = true; return; } const r = t.getBoundingClientRect(); tip.innerHTML = t.dataset.tip; tip.hidden = false; tip.style.left = Math.min(Math.max(r.left + r.width / 2, 80), innerWidth - 80) + "px"; tip.style.top = r.top + "px"; });
+document.addEventListener("scroll", () => tip.hidden = true, true);
+
+/* ================= Login ================= */
+let loginStep = 1, loginWho = "ps";
+function renderLogin() {
+  const s = staff(loginWho);
+  $("#root").innerHTML = `
+  <div class="login">
+    <section class="login-art">
+      <div class="brand"><span class="brand-mark">${CROSS}</span>Counterline</div>
+      <div>
+        <h1>Every patient call, turned into a task your team can close.</h1>
+        <p class="lead">The AI assistant answers the phone, captures the patient's details and request, and drops it here. Staff act on it, and the patient gets a text when it's done.</p>
+      </div>
+      <div class="flow">
+        <div class="flow-step"><b>1</b><span>Patient calls the pharmacy<small>Retell AI voice agent on your Twilio number</small></span></div>
+        <div class="flow-step"><b>2</b><span>Call result arrives by webhook<small>Signed, verified and stored in the UK</small></span></div>
+        <div class="flow-step"><b>3</b><span>Staff see a task with a deadline<small>Live, no refresh needed</small></span></div>
+        <div class="flow-step"><b>4</b><span>One tap: "Ready"<small>Patient gets a text via Twilio, task closes, action is audited</small></span></div>
+      </div>
+      <div class="login-meta"><span>${ic("server", "sm")} Hosted in AWS London (eu-west-2)</span><span>${ic("lock", "sm")} UK GDPR · DSPT aligned</span></div>
+      <svg class="cross" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/></svg>
+    </section>
+    <section class="login-form-wrap">
+      ${loginStep === 1 ? `
+      <form class="login-card" id="f-login" autocomplete="off">
+        <div class="brand"><span class="brand-mark">${CROSS}</span>Counterline</div>
+        <div><h2 style="font-size:22px">Sign in to ${PHARMACY.name}</h2><p class="muted" style="margin-top:4px">Pilot site · ODS ${PHARMACY.ods}</p></div>
+        <div class="field"><label>Demo staff account</label>
+          <div class="staff-pick">${STAFF.map(x => `<button type="button" class="staff-opt" data-who="${x.id}" aria-pressed="${x.id === loginWho}">${av(x.id, false)}<div><strong>${x.name}</strong><small>${x.role}</small></div></button>`).join("")}</div>
+        </div>
+        <div class="field"><label for="l-email">Work email</label><input class="input" id="l-email" value="${s.email}" readonly></div>
+        <div class="field"><label for="l-pass">Password</label><input class="input" id="l-pass" type="password" value="demo-password-123"></div>
+        <button class="btn primary" style="height:44px" type="submit">Continue</button>
+        <p class="hint">${ic("shield", "sm")}<span>Each member of staff has their own login. Everything they do is recorded in the audit trail under their name.</span></p>
+      </form>` : `
+      <form class="login-card" id="f-otp" autocomplete="off">
+        <div class="brand"><span class="brand-mark">${CROSS}</span>Counterline</div>
+        <div><h2 style="font-size:22px">Two-step verification</h2><p class="muted" style="margin-top:4px">Enter the 6-digit code from the authenticator app on ${esc(firstName(s.name))}'s phone.</p></div>
+        <div class="otp">${[0,1,2,3,4,5].map(i => `<input id="otp-${i}" inputmode="numeric" maxlength="1" aria-label="Digit ${i + 1}">`).join("")}</div>
+        <p class="err" id="otp-err" hidden>Enter all 6 digits.</p>
+        <button class="btn primary" style="height:44px" type="submit">Verify and sign in</button>
+        <button class="btn ghost" type="button" id="otp-fill">Fill demo code</button>
+        <p class="hint">${ic("clock", "sm")}<span>For the demo any 6 digits work. Sessions lock after 15 minutes idle, which suits shared dispensary PCs.</span></p>
+        <button class="btn ghost sm" type="button" id="otp-back" style="justify-self:start">← Use a different account</button>
+      </form>`}
+    </section>
+  </div>`;
+  if (loginStep === 1) {
+    $$(".staff-opt").forEach(b => b.onclick = () => { loginWho = b.dataset.who; renderLogin(); });
+    $("#f-login").onsubmit = e => { e.preventDefault(); loginStep = 2; renderLogin(); $("#otp-0").focus(); };
+  } else {
+    const ins = $$(".otp input");
+    ins.forEach((inp, i) => {
+      inp.oninput = () => { inp.value = inp.value.replace(/\D/g, "").slice(-1); if (inp.value && ins[i + 1]) ins[i + 1].focus(); if (ins.every(x => x.value)) $("#f-otp").requestSubmit(); };
+      inp.onkeydown = e => { if (e.key === "Backspace" && !inp.value && ins[i - 1]) ins[i - 1].focus(); };
+      inp.onpaste = e => { const d = (e.clipboardData.getData("text") || "").replace(/\D/g, "").slice(0, 6); if (d.length) { e.preventDefault(); d.split("").forEach((c, j) => ins[j] && (ins[j].value = c)); (ins[d.length] || ins[5]).focus(); } };
+    });
+    $("#otp-fill").onclick = () => { "482913".split("").forEach((c, j) => ins[j].value = c); $("#f-otp").requestSubmit(); };
+    $("#otp-back").onclick = () => { loginStep = 1; renderLogin(); };
+    $("#f-otp").onsubmit = e => {
+      e.preventDefault();
+      if (!ins.every(x => x.value)) { $("#otp-err").hidden = false; return; }
+      S.user = loginWho; audit("auth.login", "Session", "Signed in with password and authenticator code"); save();
+      loginStep = 1; if (!location.hash) location.hash = "tasks"; boot();
+      toast(`Signed in as ${staff(S.user).name}`, "Two-step verification passed", { icon: "shield" });
+    };
+  }
+}
+
+/* ================= Shell ================= */
+const ROUTES = [
+  { id: "tasks", label: "Tasks", icon: "list" },
+  { id: "calls", label: "Call log", short: "Calls", icon: "phone" },
+  { id: "reports", label: "Reports", icon: "chart" },
+  { id: "audit", label: "Audit trail", short: "Audit", icon: "shield" },
+  { id: "connections", label: "Connections", short: "Setup", icon: "plug" },
+];
+const route = () => { const h = location.hash.replace("#", ""); return ROUTES.some(r => r.id === h) ? h : "tasks"; };
+
+function renderShell() {
+  const u = staff(S.user);
+  $("#root").innerHTML = `
+  <div class="app">
+    <aside class="rail">
+      <div class="brand"><span class="brand-mark">${CROSS}</span>Counterline</div>
+      <div class="pharm"><strong>${PHARMACY.name}</strong><small>Pilot · ODS ${PHARMACY.ods}</small></div>
+      <nav class="nav" id="nav"></nav>
+      <div class="rail-foot">
+        <div class="demo-box">
+          <span class="eyebrow">Demo controls</span>
+          <button type="button" id="sim-call">${ic("phone", "sm")} Simulate a patient call</button>
+          <button type="button" id="sim-auto">${ic("bolt", "sm")} Auto calls <span class="switch ${S.autoSim ? "on" : ""}" id="sim-sw"></span></button>
+          <button type="button" id="theme-btn">${ic("moon", "sm")} Light / dark</button>
+          <button type="button" id="reset">${ic("refresh", "sm")} Reset demo data</button>
+        </div>
+        <div class="live"><span class="live-dot"></span><span>Live · Retell and Twilio connected</span></div>
+        <button class="me" type="button" id="logout">${av(u.id, false)}<div><strong>${u.name}</strong><small>${u.role} · Sign out</small></div>${ic("logout", "sm")}</button>
+      </div>
+    </aside>
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">${CROSS}</span>Counterline</div>
+      <div class="tb-right">
+        <span class="live"><span class="live-dot"></span></span>
+        <button class="icon-btn" type="button" id="sim-call-m" aria-label="Simulate a patient call" style="background:transparent;border-color:#2b5646;color:#cfe3db">${ic("phone", "sm")}</button>
+        <button class="me" type="button" id="logout-m" aria-label="Sign out">${av(u.id, false)}</button>
+      </div>
+    </header>
+    <main class="main" id="main"></main>
+    <nav class="tabbar" id="tabbar"></nav>
+  </div>`;
+  $("#sim-call").onclick = $("#sim-call-m").onclick = () => simulateCall();
+  $("#sim-auto").onclick = () => { S.autoSim = !S.autoSim; $("#sim-sw").classList.toggle("on", S.autoSim); save(); toast(S.autoSim ? "Auto calls on" : "Auto calls off", S.autoSim ? "A new patient call arrives every minute or two" : "Use “Simulate a patient call” to add one", { icon: "bolt" }); };
+  $("#reset").onclick = () => { const u = S.user; S = seedState(); S.user = u; save(); closeDrawer(); renderView(); toast("Demo data reset", "Fresh sample patients and calls loaded", { icon: "refresh" }); };
+  $("#theme-btn").onclick = () => { const r = document.documentElement; const dark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; r.dataset.theme = dark ? "light" : "dark"; try { localStorage.setItem("counterline-theme", r.dataset.theme); } catch (e) {} };
+  const out = () => { audit("auth.logout", "Session", "Signed out"); S.user = null; save(); closeDrawer(); boot(); };
+  $("#logout").onclick = out; $("#logout-m").onclick = out;
+}
+function renderNav() {
+  const r = route();
+  const overdue = S.tasks.filter(t => statusOf(t) === "overdue").length;
+  const open = S.tasks.filter(t => t.status !== "done").length;
+  $("#nav").innerHTML = ROUTES.map(x => `<a href="#${x.id}" ${x.id === r ? 'aria-current="page"' : ""}>${ic(x.icon)}<span>${x.label}</span>${x.id === "tasks" ? `<span class="count ${overdue ? "alert" : ""}" title="${open} open, ${overdue} overdue">${open}</span>` : ""}</a>`).join("");
+  $("#tabbar").innerHTML = ROUTES.map(x => `<a href="#${x.id}" ${x.id === r ? 'aria-current="page"' : ""}>${ic(x.icon)}<span>${x.short || x.label}</span>${x.id === "tasks" && overdue ? `<span class="count">${overdue}</span>` : ""}</a>`).join("");
+  document.title = (overdue ? `(${overdue}) ` : "") + "Counterline Pharmacy Desk";
+}
+
+function renderView() {
+  renderNav();
+  const r = route();
+  ({ tasks: viewTasks, calls: viewCalls, reports: viewReports, audit: viewAudit, connections: viewConnections })[r]();
+  S.audit.forEach(e => delete e.fresh);
+}
+
+/* ================= Tasks view ================= */
+function viewTasks() {
+  const today = new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
+  $("#main").innerHTML = `
+  <div class="page">
+    <div class="page-head">
+      <div><h1>Tasks</h1><p class="sub">${today} · requests captured by the phone assistant</p></div>
+      <div class="actions"><button class="btn" type="button" id="t-sim">${ic("phone", "sm")} Simulate a patient call</button></div>
+    </div>
+    <div id="incoming-slot"></div>
+    <div class="kpis" id="kpis"></div>
+    <section class="panel">
+      <div class="toolbar">
+        <div class="search">${ic("search", "sm")}<input class="input" id="t-q" placeholder="Search patient, medicine or task ID" value="${esc(UI.q)}"></div>
+        <select class="select" id="t-type" aria-label="Request type"><option value="all">All request types</option>${Object.entries(TYPES).map(([k, v]) => `<option value="${k}" ${UI.type === k ? "selected" : ""}>${v.label}</option>`).join("")}</select>
+      </div>
+      <div class="tasks-head"><span>Patient</span><span>Request</span><span class="h-recv">Received</span><span>Deadline</span><span>Status</span><span style="text-align:right">Actions</span></div>
+      <div id="t-list"></div>
+    </section>
+  </div>`;
+  $("#t-sim").onclick = () => simulateCall();
+  $("#t-q").oninput = e => { UI.q = e.target.value; renderTaskList(); };
+  $("#t-type").onchange = e => { UI.type = e.target.value; renderTaskList(); };
+  renderIncoming(); renderKpis(); renderTaskList();
+}
+function renderKpis() {
+  const el = $("#kpis"); if (!el) return;
+  const c = { new: 0, progress: 0, overdue: 0 };
+  S.tasks.forEach(t => { const s = statusOf(t); if (s !== "done") c[s]++; });
+  const doneToday = S.tasks.filter(t => t.status === "done" && isToday(t.closedAt));
+  const onTime = doneToday.filter(t => t.closedAt <= t.dueAt).length;
+  const K = [
+    { f: "new", label: "New", color: "var(--new)", val: c.new, foot: "Waiting for someone to pick up" },
+    { f: "progress", label: "In progress", color: "var(--prog)", val: c.progress, foot: "Being worked on" },
+    { f: "overdue", label: "Overdue", color: "var(--late)", val: c.overdue, foot: c.overdue ? "Past deadline, needs action" : "Nothing past deadline" },
+    { f: "done", label: "Done today", color: "var(--done)", val: doneToday.length, foot: `${onTime} of ${doneToday.length} closed on time` },
+  ];
+  el.innerHTML = K.map(k => `<button type="button" class="kpi ${k.f === "overdue" && k.val ? "overdue-hot" : ""}" data-f="${k.f}" aria-pressed="${UI.filter === k.f}"><span class="k-label"><i style="background:${k.color}"></i>${k.label}</span><span class="k-val">${k.val}</span><span class="k-foot">${k.foot}</span></button>`).join("");
+  $$(".kpi", el).forEach(b => b.onclick = () => { UI.filter = UI.filter === b.dataset.f ? "open" : b.dataset.f; renderKpis(); renderTaskList(); });
+}
+function filteredTasks() {
+  const q = UI.q.trim().toLowerCase();
+  return S.tasks.filter(t => {
+    const s = statusOf(t);
+    if (UI.filter === "open" && s === "done") return false;
+    if (UI.filter !== "open" && UI.filter !== "all" && s !== UI.filter) return false;
+    if (UI.type !== "all" && t.type !== UI.type) return false;
+    if (q && !(t.patient.name + " " + t.items.join(" ") + " " + t.id + " " + TYPES[t.type].label).toLowerCase().includes(q)) return false;
+    return true;
+  }).sort((a, b) => {
+    const rank = { overdue: 0, new: 1, progress: 2, done: 3 };
+    const ra = rank[statusOf(a)], rb = rank[statusOf(b)];
+    if (ra !== rb) return ra - rb;
+    return statusOf(a) === "done" ? b.closedAt - a.closedAt : a.dueAt - b.dueAt;
+  });
+}
+function dueCell(t) {
+  const s = statusOf(t);
+  if (s === "done") { const late = t.closedAt > t.dueAt; return `<div class="t-due"><span class="num">Closed ${fmtTime(t.closedAt)}</span><small>${late ? "After deadline" : "On time"}</small></div>`; }
+  const m = (t.dueAt - now()) / MIN;
+  const day = isToday(t.dueAt) ? fmtTime(t.dueAt) : fmtDay(t.dueAt) + " " + fmtTime(t.dueAt);
+  return `<div class="t-due ${m < 0 ? "late" : m < 30 ? "soon" : ""}"><span class="num">${day}</span><small>${m < 0 ? dur(m) + " overdue" : "in " + dur(m)}</small></div>`;
+}
+function renderTaskList() {
+  const el = $("#t-list"); if (!el) return;
+  const list = filteredTasks();
+  if (!list.length) {
+    const msg = { open: ["All caught up", "No open tasks. New patient calls will appear here automatically."], overdue: ["Nothing overdue", "Every open task is within its deadline."], new: ["No new tasks", "New patient calls will appear here automatically."], progress: ["Nothing in progress", "Start a new task to see it here."], done: ["Nothing closed yet today", "Tasks you close will show here."] }[UI.filter] || ["No matches", "Try a different search."];
+    el.innerHTML = `<div class="empty"><strong>${UI.q ? "No matches" : msg[0]}</strong><span>${UI.q ? `Nothing matches “${esc(UI.q)}”.` : msg[1]}</span></div>`;
+    return;
+  }
+  el.innerHTML = list.map(t => {
+    const s = statusOf(t), T = TYPES[t.type];
+    return `<div class="task st-${s} ${UI.flash === t.id ? "flash" : ""}" data-id="${t.id}" tabindex="0" role="button" aria-label="Open ${esc(t.patient.name)}">
+      <div class="t-who"><div class="t-name"><span>${esc(t.patient.name)}</span>${T.pharmacist ? '<span class="badge-ph" title="Needs a pharmacist">Rx</span>' : ""}</div><div class="t-sub"><span class="mono">${t.id}</span> · ${age(t.patient.dob)} yrs · ${t.owner ? esc(staff(t.owner).name) : "Unassigned"}</div></div>
+      <div class="t-type"><span class="tag">${T.label}</span><span class="t-sub">${esc(t.items.join(", "))}</span></div>
+      <div class="t-time num">${fmtTime(t.createdAt)}<small>${ago(t.createdAt)}</small></div>
+      ${dueCell(t)}
+      <div class="t-status">${pillHTML(s)}</div>
+      <div class="t-acts">${s === "done"
+        ? `<button class="icon-btn" type="button" data-act="reopen" data-tip="Reopen" aria-label="Reopen">${ic("reopen", "sm")}</button>`
+        : `${T.ready ? `<button class="icon-btn" type="button" data-act="ready" data-tip="Ready: text patient and close" aria-label="Ready">${ic("msg", "sm")}</button>` : ""}<button class="icon-btn" type="button" data-act="called" data-tip="Called back" aria-label="Called back">${ic("phoneBack", "sm")}</button>`}</div>
+    </div>`;
+  }).join("");
+  UI.flash = null;
+  $$(".task", el).forEach(row => {
+    row.onclick = e => { const b = e.target.closest("[data-act]"); const t = S.tasks.find(x => x.id === row.dataset.id); if (b) { e.stopPropagation(); tip.hidden = true; quickAct(b.dataset.act, t); } else openTask(t.id); };
+    row.onkeydown = e => { if (e.key === "Enter" && e.target === row) openTask(row.dataset.id); };
+  });
+}
+function renderIncoming() {
+  const el = $("#incoming-slot"); if (!el) return;
+  const c = UI.incoming;
+  el.innerHTML = c ? `<div class="incoming"><span class="ring">${ic("phone", "sm")}</span><div><strong>AI assistant is on a call with ${maskPhone(c.phone)}</strong><small>Retell AI · ${c.stage}</small></div><span class="wave"><i></i><i></i><i></i><i></i><i></i></span></div>` : "";
+}
+
+/* ================= Task actions ================= */
+function setStatus(t, st, kind, text) {
+  t.status = st;
+  if (st === "done") { t.closedAt = now(); t.closedBy = S.user; t.closeHow = kind; }
+  else { t.closedAt = null; t.closedBy = null; t.closeHow = null; }
+  if (!t.owner && st !== "new") t.owner = S.user;
+  t.events.push({ at: now(), by: S.user, kind, text });
+}
+function refreshAll() { save(); renderView(); if (UI.openTask) renderDrawer(); }
+function smsText(t) {
+  const n = firstName(t.patient.name);
+  return {
+    repeat: `Hi ${n}, your prescription is ready to collect from ${PHARMACY.name}, 14 Quay Street. We're open until 6:30pm today. Reply STOP to opt out.`,
+    ready: `Hi ${n}, your prescription is ready to collect from ${PHARMACY.name}, 14 Quay Street. We're open until 6:30pm today. Reply STOP to opt out.`,
+    delivery: `Hi ${n}, your medicines from ${PHARMACY.name} are out for delivery today between 1pm and 3pm. Please make sure someone is in. Reply STOP to opt out.`,
+    stock: `Hi ${n}, good news: the item you asked about is now in stock at ${PHARMACY.name}. We've put it aside for you. Reply STOP to opt out.`,
+    vaccine: `Hi ${n}, you're booked in at ${PHARMACY.name} on Thursday at 10:30. Please bring your NHS number if you have it. Reply STOP to opt out.`,
+    question: `Hi ${n}, the pharmacist at ${PHARMACY.name} tried to reach you. Please call us on ${PHARMACY.phone}. Reply STOP to opt out.`,
+    pfirst: `Hi ${n}, the pharmacist at ${PHARMACY.name} can see you today. Please come in any time before 6pm. Reply STOP to opt out.`,
+  }[t.type];
+}
+function sendSms(t, body, delayMs) {
+  const prevSnap = JSON.stringify({ status: t.status, owner: t.owner, closedAt: t.closedAt, closedBy: t.closedBy, closeHow: t.closeHow, events: t.events });
+  setStatus(t, "done", "sms", `Marked ready. Text sent to ${maskPhone(t.patient.phone)}`);
+  refreshAll();
+  const commit = () => {
+    const sid = "SM" + hex(32);
+    S.sms.push({ at: now(), to: t.patient.phone, sid, status: "delivered", taskId: t.id, body });
+    audit("sms.send", t.id, `Text sent via Twilio to ${maskPhone(t.patient.phone)}. Task closed`);
+    save(); if (route() === "audit") renderView();
+    toast(`Text delivered to ${t.patient.name}`, `Twilio ${sid.slice(0, 14)}… · status: delivered`, { icon: "msg" });
+  };
+  if (!delayMs) { commit(); return; }
+  toast(`Texting ${t.patient.name}…`, `Sending in ${delayMs / 1000}s. Task moved to Done.`, {
+    icon: "msg", action: "Undo", ms: delayMs, onExpire: commit,
+    onAction: () => { Object.assign(t, JSON.parse(prevSnap)); refreshAll(); toast("Text cancelled", "Nothing was sent. Task restored.", { icon: "reopen" }); },
+  });
+}
+function quickAct(act, t) {
+  if (act === "ready") sendSms(t, smsText(t), 4000);
+  else if (act === "called") openCalledBack(t);
+  else if (act === "reopen") reopen(t);
+}
+function reopen(t) { setStatus(t, "progress", "reopen", "Reopened"); audit("task.reopen", t.id, "Status changed: Done → In progress"); refreshAll(); toast(`${t.id} reopened`, t.patient.name, { icon: "reopen" }); }
+function startTask(t) { setStatus(t, "progress", "start", "Started working on this"); t.owner = S.user; audit("task.start", t.id, "Status changed: New → In progress"); refreshAll(); toast(`You're on ${t.id}`, t.patient.name, { icon: "start" }); }
+
+/* ================= Drawer ================= */
+function openTask(id) {
+  UI.openTask = id;
+  if (!$(".drawer")) {
+    document.body.insertAdjacentHTML("beforeend", `<div class="scrim" id="d-scrim"></div><aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Task details"></aside>`);
+    $("#d-scrim").onclick = closeDrawer;
+    requestAnimationFrame(() => { $("#d-scrim").classList.add("show"); $("#drawer").classList.add("show"); });
+  }
+  const t = S.tasks.find(x => x.id === id);
+  audit("task.view", id, `Opened record for ${t.patient.name}`); save();
+  renderDrawer();
+}
+function closeDrawer() {
+  UI.openTask = null;
+  const d = $("#drawer"), s = $("#d-scrim"); if (!d) return;
+  d.classList.remove("show"); s.classList.remove("show");
+  setTimeout(() => { d.remove(); s.remove(); }, 250);
+}
+document.addEventListener("keydown", e => { if (e.key === "Escape") { if ($(".modal")) $(".modal").remove(); else closeDrawer(); } });
+const EV_ICON = { create: "bolt", start: "start", sms: "msg", call: "phoneBack", note: "note", reopen: "reopen", callfail: "phone" };
+function renderDrawer() {
+  const t = S.tasks.find(x => x.id === UI.openTask); const d = $("#drawer"); if (!t || !d) return;
+  const s = statusOf(t), T = TYPES[t.type], call = S.calls.find(c => c.id === t.callId);
+  const shown = UI.revealed[t.id];
+  d.innerHTML = `
+    <div class="d-head">
+      <div class="d-head-top"><div><span class="eyebrow mono">${t.id}</span><h2>${esc(t.patient.name)}</h2></div><button class="icon-btn" type="button" id="d-close" aria-label="Close">${ic("x", "sm")}</button></div>
+      <div class="d-meta">${pillHTML(s)}<span class="tag">${T.label}</span>${T.pharmacist ? '<span class="tag" style="color:var(--prog)">Pharmacist to review</span>' : ""}<span class="tag">${ic("clock", "sm")} ${s === "done" ? "Closed " + fmtTime(t.closedAt) : (t.dueAt < now() ? dur((now() - t.dueAt) / MIN) + " overdue" : "Due in " + dur((t.dueAt - now()) / MIN))}</span></div>
+    </div>
+    <div class="d-body">
+      <section class="d-sec">
+        <h3>Patient</h3>
+        <dl class="kv">
+          <dt>Date of birth</dt><dd class="num">${dobLong(t.patient.dob)} (${age(t.patient.dob)})</dd>
+          <dt>Mobile</dt><dd class="num">${shown ? t.patient.phone.replace(/(\d{5})(\d{3})(\d{3})/, "$1 $2 $3") : maskPhone(t.patient.phone)}${shown ? "" : `<button class="reveal" type="button" id="d-reveal">Show</button>`}</dd>
+          <dt>NHS number</dt><dd class="num">${shown ? t.patient.nhs : "••• ••• " + t.patient.nhs.slice(-4)}</dd>
+          <dt>SMS consent</dt><dd>Given on call</dd>
+          <dt>Assigned to</dt><dd>${t.owner ? `<span class="who">${av(t.owner)} ${esc(staff(t.owner).name)}</span>` : '<span class="muted">Unassigned</span>'}</dd>
+        </dl>
+      </section>
+      <section class="d-sec">
+        <h3>What the patient asked for</h3>
+        <div class="ai-box">
+          <span class="src">${ic("spark", "sm")} Captured by the AI assistant · ${fmtTime(t.createdAt)}</span>
+          <p>${esc(t.summary)}</p>
+          <ul class="items">${t.items.map(i => `<li>${ic("pill", "sm")}${esc(i)}</li>`).join("")}</ul>
+          <p class="muted" style="font-size:13px">“${esc(t.said)}”</p>
+        </div>
+        ${call ? `<button class="btn sm" type="button" id="d-call" style="justify-self:start">${ic("phone", "sm")} Open call, transcript and recording (${secs(call.durS)})</button>` : ""}
+      </section>
+      <section class="d-sec">
+        <h3>Activity</h3>
+        <ul class="timeline">${[...t.events].reverse().map(e => `<li><span class="dot">${ic(EV_ICON[e.kind] || "note")}</span><div class="tl-text"><strong>${esc(staff(e.by).name)}</strong> ${e.kind === "note" ? "added a note" : esc(e.text.charAt(0).toLowerCase() + e.text.slice(1))}<small>${fmtStamp(e.at)}</small>${e.kind === "note" ? `<div class="note">${esc(e.text)}</div>` : ""}</div></li>`).join("")}</ul>
+      </section>
+    </div>
+    <div class="d-foot">
+      ${s === "done"
+        ? `<button class="btn primary" type="button" data-d="reopen">${ic("reopen", "sm")} Reopen task</button><button class="btn" type="button" data-d="note">${ic("note", "sm")} Add note</button>`
+        : `${T.ready ? `<button class="btn primary" type="button" data-d="ready">${ic("msg", "sm")} Ready: text patient</button>` : ""}
+           <button class="btn ${T.ready ? "" : "primary"}" type="button" data-d="called">${ic("phoneBack", "sm")} Called back</button>
+           ${t.status === "new" ? `<button class="btn" type="button" data-d="start">${ic("start", "sm")} Start</button>` : ""}
+           <button class="btn" type="button" data-d="note">${ic("note", "sm")} Note</button>`}
+    </div>`;
+  $("#d-close").onclick = closeDrawer;
+  const rv = $("#d-reveal"); if (rv) rv.onclick = () => { UI.revealed[t.id] = true; audit("patient.view_phone", t.id, "Revealed full phone number and NHS number"); save(); renderDrawer(); toast("Access recorded", "Viewing full contact details is logged in the audit trail", { icon: "shield" }); };
+  const dc = $("#d-call"); if (dc) dc.onclick = () => { UI.callSel = t.callId; closeDrawer(); location.hash = "calls"; };
+  $$("[data-d]", d).forEach(b => b.onclick = () => {
+    const a = b.dataset.d;
+    if (a === "ready") openSms(t); else if (a === "called") openCalledBack(t); else if (a === "note") openNote(t); else if (a === "reopen") reopen(t); else if (a === "start") startTask(t);
+  });
+}
+
+/* ================= Modals ================= */
+function modal(html, onMount) {
+  const m = document.createElement("div"); m.className = "modal"; m.setAttribute("role", "dialog"); m.setAttribute("aria-modal", "true");
+  m.innerHTML = `<div class="scrim"></div><div class="modal-card">${html}</div>`;
+  document.body.appendChild(m); $(".scrim", m).onclick = () => m.remove();
+  onMount(m, () => m.remove());
+}
+function segments(s) { const gsm = /^[\x20-\x7E\n£€]*$/.test(s); const per = gsm ? (s.length > 160 ? 153 : 160) : (s.length > 70 ? 67 : 70); return Math.max(1, Math.ceil(s.length / per)); }
+function openSms(t) {
+  modal(`
+    <div><span class="eyebrow">Mark ready and text patient</span><h2 style="margin-top:4px">Text ${esc(t.patient.name)}</h2></div>
+    <div class="sms-phone"><div class="sms-meta"><span>From: HARBOURSIDE</span><span class="num">To: ${maskPhone(t.patient.phone)}</span></div><div class="sms-bubble" id="sms-prev"></div></div>
+    <div class="field"><label for="sms-body">Message</label><textarea class="input" id="sms-body">${esc(smsText(t))}</textarea><span class="muted num" id="sms-count" style="font-size:12px"></span></div>
+    <div class="modal-actions"><button class="btn" type="button" id="sms-cancel">Cancel</button><button class="btn primary" type="button" id="sms-send">${ic("msg", "sm")} Send and close task</button></div>`,
+  (m, close) => {
+    const ta = $("#sms-body", m);
+    const upd = () => { $("#sms-prev", m).textContent = ta.value; $("#sms-count", m).textContent = `${ta.value.length} characters · ${segments(ta.value)} SMS segment${segments(ta.value) > 1 ? "s" : ""} · sent via Twilio Messaging Service`; };
+    ta.oninput = upd; upd();
+    $("#sms-cancel", m).onclick = close;
+    $("#sms-send", m).onclick = () => {
+      const b = $("#sms-send", m); b.disabled = true; b.innerHTML = "Sending via Twilio…";
+      setTimeout(() => { close(); sendSms(t, ta.value, 0); }, 800);
+    };
+  });
+}
+function openCalledBack(t) {
+  const OPTS = [
+    { k: "resolved", title: "Spoke to patient, resolved", sub: "Closes the task" },
+    { k: "voicemail", title: "No answer, left a voicemail", sub: "Task stays open" },
+    { k: "noanswer", title: "No answer, will try again", sub: "Task stays open" },
+  ];
+  let sel = "resolved";
+  modal(`
+    <div><span class="eyebrow">Log a call-back</span><h2 style="margin-top:4px">${esc(t.patient.name)}</h2><p class="muted num" style="margin-top:2px">${t.patient.phone.replace(/(\d{5})(\d{3})(\d{3})/, "$1 $2 $3")}</p></div>
+    <div class="opt-list">${OPTS.map(o => `<button class="opt" type="button" data-k="${o.k}" aria-pressed="${o.k === sel}">${ic(o.k === "resolved" ? "check" : "phone", "sm")}<span><strong>${o.title}</strong><small>${o.sub}</small></span></button>`).join("")}</div>
+    <div class="field"><label for="cb-note">Note (optional)</label><textarea class="input" id="cb-note" placeholder="e.g. Advised to stop ramipril and see GP about switching to losartan"></textarea></div>
+    <div class="modal-actions"><button class="btn" type="button" id="cb-cancel">Cancel</button><button class="btn primary" type="button" id="cb-save">Save call-back</button></div>`,
+  (m, close) => {
+    $$(".opt", m).forEach(b => b.onclick = () => { sel = b.dataset.k; $$(".opt", m).forEach(x => x.setAttribute("aria-pressed", x.dataset.k === sel)); });
+    $("#cb-cancel", m).onclick = close;
+    $("#cb-save", m).onclick = () => {
+      const note = $("#cb-note", m).value.trim();
+      const o = OPTS.find(x => x.k === sel);
+      if (sel === "resolved") { setStatus(t, "done", "call", "Called back. Spoke to patient, resolved"); audit("task.callback", t.id, "Logged call-back: resolved. Task closed"); }
+      else { setStatus(t, "progress", "callfail", "Called back. " + o.title.replace("No answer, ", "No answer, ")); audit("task.callback", t.id, "Logged call-back: " + o.title.toLowerCase()); }
+      if (note) { t.events.push({ at: now() + 1, by: S.user, kind: "note", text: note }); audit("task.note", t.id, "Added a note"); }
+      close(); refreshAll();
+      toast(sel === "resolved" ? `${t.id} closed` : "Call-back logged", sel === "resolved" ? `${t.patient.name} · called back` : `${t.patient.name} · task kept open`, { icon: "phoneBack" });
+    };
+  });
+}
+function openNote(t) {
+  modal(`
+    <div><span class="eyebrow">Add note · ${t.id}</span><h2 style="margin-top:4px">${esc(t.patient.name)}</h2></div>
+    <div class="field"><label for="n-body">Note for the team</label><textarea class="input" id="n-body" placeholder="e.g. Owing 1 × apixaban, wholesaler delivery 4pm"></textarea></div>
+    <p class="hint">${ic("lock", "sm")}<span>Notes are part of the patient record. Keep them factual and only include what the team needs.</span></p>
+    <div class="modal-actions"><button class="btn" type="button" id="n-cancel">Cancel</button><button class="btn primary" type="button" id="n-save">Add note</button></div>`,
+  (m, close) => {
+    const ta = $("#n-body", m); setTimeout(() => ta.focus(), 50);
+    $("#n-cancel", m).onclick = close;
+    $("#n-save", m).onclick = () => { const v = ta.value.trim(); if (!v) { ta.focus(); return; } t.events.push({ at: now(), by: S.user, kind: "note", text: v }); audit("task.note", t.id, "Added a note"); close(); refreshAll(); toast("Note added", t.id, { icon: "note" }); };
+  });
+}
+
+/* ================= Simulated Retell call ================= */
+let simBusy = false;
+function simulateCall() {
+  if (simBusy) { toast("A call is already in progress", "Wait for it to finish", { icon: "phone" }); return; }
+  simBusy = true;
+  const d = SIM_POOL[S.simIdx % SIM_POOL.length]; S.simIdx++;
+  UI.incoming = { phone: d.phone, stage: "Greeting caller" }; renderIncoming();
+  const stages = ["Confirming name and date of birth", `Capturing request: ${TYPES[d.type].label.toLowerCase()}`, "Call ended · analysing"];
+  stages.forEach((st, i) => setTimeout(() => { if (UI.incoming) { UI.incoming.stage = st; renderIncoming(); } }, 1300 * (i + 1)));
+  setTimeout(() => {
+    UI.incoming = null; simBusy = false;
+    const t0 = now(), id = "T-" + (S.seq++), callId = retellId(), durS = rnd(80, 170);
+    const task = { id, patient: { name: d.name, dob: d.dob, phone: d.phone, nhs: d.nhs }, type: d.type, items: d.items, said: d.said, summary: d.summary,
+      createdAt: t0, dueAt: t0 + TYPES[d.type].sla * MIN, status: "new", owner: null, callId, closedAt: null, closedBy: null, closeHow: null,
+      events: [{ at: t0, by: "sys", kind: "create", text: "Task created from AI call" }] };
+    S.tasks.push(task);
+    S.calls.unshift({ id: callId, at: t0 - durS * 1000, from: d.phone, caller: d.name, reason: TYPES[d.type].label, durS, outcome: "Task created", taskId: id, summary: d.summary, transcript: makeTranscript(d), sentiment: "Positive" });
+    S.hooks.push(hookEvent(callId, t0, d, durS));
+    audit("task.create", id, "Created from Retell webhook (call_analyzed)", "sys");
+    UI.flash = id; if (UI.filter !== "open" && UI.filter !== "new") UI.filter = "open";
+    save(); renderView(); if (UI.openTask) renderDrawer();
+    toast(`New task: ${d.name}`, `${TYPES[d.type].label} · webhook received in ${rnd(60, 140)}ms`, { icon: "bolt", action: "Open", onAction: () => { location.hash = "tasks"; openTask(id); }, ms: 6000 });
+  }, 5400);
+}
+
+/* ================= Calls view ================= */
+function viewCalls() {
+  const calls = S.calls.filter(c => isToday(c.at));
+  if (!UI.callSel || !S.calls.some(c => c.id === UI.callSel)) UI.callSel = calls[0] && calls[0].id;
+  const avg = calls.length ? Math.round(calls.reduce((a, c) => a + c.durS, 0) / calls.length) : 0;
+  const tasksMade = calls.filter(c => c.taskId).length;
+  $("#main").innerHTML = `
+  <div class="page">
+    <div class="page-head"><div><h1>Call log</h1><p class="sub">${calls.length} calls today · ${tasksMade} became tasks · average ${secs(avg)} per call</p></div></div>
+    <div class="calls-grid">
+      <section class="panel"><div class="calls-list" id="c-list">${calls.map(c => `
+        <button class="call-row" type="button" data-id="${c.id}" aria-current="${c.id === UI.callSel}">
+          <span class="c-time">${fmtTime(c.at)}</span>
+          <span class="c-main"><strong>${esc(c.caller === "Unknown caller" ? maskPhone(c.from) : c.caller)}</strong><small>${esc(c.reason)} · ${secs(c.durS)}</small></span>
+          <span class="c-right"><span class="pill ${c.taskId ? "done" : "plain"}">${c.outcome}</span></span>
+        </button>`).join("")}</div></section>
+      <section class="panel call-detail" id="c-detail"></section>
+    </div>
+  </div>`;
+  $$(".call-row").forEach(b => b.onclick = () => { UI.callSel = b.dataset.id; UI.playing = false; UI.playPos = 0; $$(".call-row").forEach(x => x.setAttribute("aria-current", x.dataset.id === UI.callSel)); renderCallDetail(); if (innerWidth < 1100) $("#c-detail").scrollIntoView({ behavior: "smooth", block: "start" }); });
+  renderCallDetail();
+}
+let playTimer = null;
+function renderCallDetail() {
+  const el = $("#c-detail"); const c = S.calls.find(x => x.id === UI.callSel); if (!el) return;
+  if (!c) { el.innerHTML = `<div class="empty"><strong>No calls yet today</strong><span>Calls answered by the assistant appear here.</span></div>`; return; }
+  const task = c.taskId && S.tasks.find(t => t.id === c.taskId);
+  const N = 64; let seedv = parseInt(c.id.slice(5, 13), 16);
+  const bars = Array.from({ length: N }, () => { seedv = (seedv * 1103515245 + 12345) & 0x7fffffff; return 20 + (seedv % 80); });
+  el.innerHTML = `
+    <div class="panel-head"><div><span class="eyebrow">${fmtStamp(c.at)} · ${secs(c.durS)}</span><h2 style="margin-top:2px">${esc(c.caller === "Unknown caller" ? "Caller " + maskPhone(c.from) : c.caller)}</h2></div><span class="pill ${c.taskId ? "done" : "plain"}">${c.outcome}</span></div>
+    <div class="panel-body" style="display:grid;gap:18px">
+      <div class="ai-box"><span class="src">${ic("spark", "sm")} Call summary from Retell AI · sentiment: ${c.sentiment}</span><p>${esc(c.summary)}</p>
+        <dl class="kv" style="font-size:13px"><dt>Reason</dt><dd>${esc(c.reason)}</dd><dt>From</dt><dd class="num">${maskPhone(c.from)}</dd><dt>Retell call ID</dt><dd class="mono" style="font-size:12px">${c.id}</dd>${task ? `<dt>Task</dt><dd><button class="reveal" style="padding:0" type="button" id="c-task">${task.id} · ${STLABEL[statusOf(task)]} →</button></dd>` : ""}</dl>
+      </div>
+      <div class="player">
+        <button class="play" type="button" id="c-play" aria-label="${UI.playing ? "Pause" : "Play"} recording"><svg class="i sm" viewBox="0 0 24 24">${P[UI.playing ? "pause" : "play"]}</svg></button>
+        <div class="bars" id="c-bars">${bars.map((h, i) => `<i style="height:${h}%" class="${i / N < UI.playPos ? "on" : ""}"></i>`).join("")}</div>
+        <span class="mono" id="c-pos">${secs(Math.floor(UI.playPos * c.durS))} / ${secs(c.durS)}</span>
+      </div>
+      <div class="d-sec"><h3>Transcript</h3><div class="transcript">${c.transcript.map(m => `<div class="msg ${m.who}"><small>${m.who === "agent" ? "Assistant" : (c.caller === "Unknown caller" ? "Caller" : esc(firstName(c.caller)))}</small><p>${esc(m.text)}</p></div>`).join("")}</div></div>
+      <div class="links"><button class="btn sm" type="button" data-ext="transcript">${ic("ext", "sm")} Transcript in Retell</button><button class="btn sm" type="button" data-ext="recording">${ic("ext", "sm")} Recording file</button></div>
+    </div>`;
+  const ct = $("#c-task"); if (ct) ct.onclick = () => { location.hash = "tasks"; setTimeout(() => openTask(task.id), 30); };
+  $$("[data-ext]", el).forEach(b => b.onclick = () => { audit("call.open_" + b.dataset.ext, c.id, `Opened ${b.dataset.ext} link in Retell`); save(); toast(`Opens the ${b.dataset.ext} in Retell`, `In the live build this is a signed, expiring link for ${c.id.slice(0, 18)}…`, { icon: "ext" }); });
+  $("#c-play").onclick = () => {
+    UI.playing = !UI.playing;
+    if (UI.playing && UI.playPos === 0) { audit("call.play_recording", c.id, "Played call recording"); save(); }
+    clearInterval(playTimer);
+    if (UI.playing) playTimer = setInterval(() => {
+      if (route() !== "calls" || UI.callSel !== c.id) { clearInterval(playTimer); UI.playing = false; return; }
+      UI.playPos = Math.min(1, UI.playPos + 1 / c.durS * 2);
+      $$("#c-bars i").forEach((b, i) => b.classList.toggle("on", i / N < UI.playPos));
+      $("#c-pos").textContent = `${secs(Math.floor(UI.playPos * c.durS))} / ${secs(c.durS)}`;
+      if (UI.playPos >= 1) { UI.playing = false; UI.playPos = 0; clearInterval(playTimer); renderCallDetail(); }
+    }, 500);
+    $("#c-play").innerHTML = `<svg class="i sm" viewBox="0 0 24 24">${P[UI.playing ? "pause" : "play"]}</svg>`;
+  };
+}
+
+/* ================= Reports view ================= */
+const HIST = [ // previous 6 days: [calls by reason], closed, onTime, medianMins
+  { calls: { repeat: 19, ready: 14, question: 6, delivery: 5, pfirst: 4, vaccine: 9, stock: 3, "Opening hours": 8, "Directions and parking": 3, "Transferred to staff": 4 }, closed: 46, onTime: 41, med: 52 },
+  { calls: { repeat: 22, ready: 17, question: 5, delivery: 6, pfirst: 6, vaccine: 7, stock: 4, "Opening hours": 6, "Directions and parking": 2, "Transferred to staff": 5 }, closed: 51, onTime: 48, med: 47 },
+  { calls: { repeat: 12, ready: 9, question: 2, delivery: 2, pfirst: 3, vaccine: 6, stock: 1, "Opening hours": 5, "Directions and parking": 1, "Transferred to staff": 2 }, closed: 28, onTime: 27, med: 39 },
+  { calls: { repeat: 0, ready: 0, question: 0, delivery: 0, pfirst: 0, vaccine: 0, stock: 0, "Opening hours": 3, "Directions and parking": 0, "Transferred to staff": 0 }, closed: 0, onTime: 0, med: 0 },
+  { calls: { repeat: 25, ready: 18, question: 7, delivery: 7, pfirst: 5, vaccine: 11, stock: 4, "Opening hours": 9, "Directions and parking": 3, "Transferred to staff": 6 }, closed: 58, onTime: 50, med: 61 },
+  { calls: { repeat: 20, ready: 16, question: 4, delivery: 5, pfirst: 7, vaccine: 8, stock: 2, "Opening hours": 7, "Directions and parking": 2, "Transferred to staff": 3 }, closed: 49, onTime: 45, med: 50 },
+];
+function viewReports() {
+  const todayCalls = S.calls.filter(c => isToday(c.at));
+  const reasonKey = c => Object.keys(TYPES).find(k => TYPES[k].label === c.reason) || c.reason;
+  const reasons = {}; [...Object.keys(TYPES), ...INFO_REASONS].forEach(k => reasons[k] = 0);
+  todayCalls.forEach(c => reasons[reasonKey(c)] = (reasons[reasonKey(c)] || 0) + 1);
+  const closedToday = S.tasks.filter(t => t.status === "done" && isToday(t.closedAt));
+  const onTimeToday = closedToday.filter(t => t.closedAt <= t.dueAt).length;
+  const mins = closedToday.map(t => (t.closedAt - t.createdAt) / MIN).sort((a, b) => a - b);
+  const medToday = mins.length ? Math.round(mins[Math.floor(mins.length / 2)]) : 0;
+  const week = UI.range === "week";
+  const R = { ...reasons };
+  if (week) HIST.forEach(h => Object.entries(h.calls).forEach(([k, v]) => R[k] += v));
+  const totalCalls = Object.values(R).reduce((a, b) => a + b, 0);
+  const tasksFromCalls = Object.keys(TYPES).reduce((a, k) => a + R[k], 0);
+  const closed = closedToday.length + (week ? HIST.reduce((a, h) => a + h.closed, 0) : 0);
+  const onTime = onTimeToday + (week ? HIST.reduce((a, h) => a + h.onTime, 0) : 0);
+  const pct = closed ? Math.round(onTime / closed * 100) : 0;
+  const med = week ? 51 : medToday;
+  const label = k => TYPES[k] ? TYPES[k].label : k;
+  const rows = Object.entries(R).sort((a, b) => b[1] - a[1]);
+  const maxR = Math.max(1, ...rows.map(r => r[1]));
+
+  // On-time by day
+  const days = HIST.map((h, i) => ({ ts: now() - (6 - i) * 24 * 60 * MIN, closed: h.closed, onTime: h.onTime }));
+  days.push({ ts: now(), closed: closedToday.length, onTime: onTimeToday, today: true });
+  // Calls by hour (today)
+  const hours = []; for (let h = 8; h <= 18; h++) hours.push({ h, n: todayCalls.filter(c => new Date(c.at).getHours() === h).length });
+  const maxH = Math.max(4, ...hours.map(x => x.n)); const stepH = maxH <= 8 ? 2 : 5; const topH = Math.ceil(maxH / stepH) * stepH;
+  const curH = new Date().getHours();
+
+  $("#main").innerHTML = `
+  <div class="page">
+    <div class="page-head"><div><h1>Reports</h1><p class="sub">${week ? "Last 7 days, including today" : "Today so far"} · ${PHARMACY.name}</p></div>
+      <div class="actions"><div class="seg" role="group" aria-label="Date range"><button type="button" data-r="today" aria-pressed="${!week}">Today</button><button type="button" data-r="week" aria-pressed="${week}">Last 7 days</button></div></div></div>
+    <div class="stat-row">
+      <div class="stat"><span class="s-label">Calls answered by AI</span><span class="s-val">${totalCalls}</span><span class="s-foot">${totalCalls ? Math.round(tasksFromCalls / totalCalls * 100) : 0}% became a task</span></div>
+      <div class="stat"><span class="s-label">Tasks closed</span><span class="s-val">${closed}</span><span class="s-foot">${S.tasks.filter(t => t.status !== "done").length} still open now</span></div>
+      <div class="stat"><span class="s-label">Closed on time</span><span class="s-val">${pct}<small>%</small></span><div class="meter" aria-hidden="true"><i style="width:${pct}%"></i></div><span class="s-foot">${onTime} of ${closed} · target 90%</span></div>
+      <div class="stat"><span class="s-label">Median time to close</span><span class="s-val">${med ? dur(med) : "–"}</span><span class="s-foot">From call ending to task closed</span></div>
+    </div>
+    <div class="charts">
+      <section class="panel"><div class="panel-head"><h2>Calls by reason</h2><span class="muted num">${totalCalls} calls</span></div>
+        <div class="panel-body"><div class="hbars">${rows.map(([k, v]) => `<div class="hbar" data-tip="${esc(label(k))}: <b>${v}</b> call${v === 1 ? "" : "s"} (${totalCalls ? Math.round(v / totalCalls * 100) : 0}%)"><span class="lbl">${esc(label(k))}</span><span class="track"><span class="fill" style="width:${v / maxR * 100}%"></span></span><span class="val">${v}</span></div>`).join("")}</div></div></section>
+      <section class="panel"><div class="panel-head"><h2>Tasks closed on time</h2><div class="legend"><span><i></i>% on time</span><span><i class="dash"></i>90% target</span></div></div>
+        <div class="panel-body">
+          <div class="cols">${[0, 25, 50, 75, 100].map(v => `<div class="grid-l" style="bottom:${v}%"><span>${v}%</span></div>`).join("")}<div class="target" style="bottom:90%"></div>
+            <div class="bars-c">${days.map(d => { const p = d.closed ? Math.round(d.onTime / d.closed * 100) : 0; return `<div class="col ${d.closed ? "" : "dim"}" data-tip="${d.today ? "Today" : fmtDay(d.ts)}: <b>${d.closed ? p + "%" : "closed"}</b>${d.closed ? ` (${d.onTime} of ${d.closed})` : ""}"><i style="height:${d.closed ? p : 0}%"></i></div>`; }).join("")}</div></div>
+          <div class="x-axis">${days.map(d => `<span>${d.today ? "Today" : new Date(d.ts).toLocaleDateString("en-GB", { weekday: "short" })}</span>`).join("")}</div>
+        </div></section>
+      <section class="panel wide"><div class="panel-head"><h2>Calls by hour, today</h2><span class="muted">Busiest: ${(() => { const b = hours.reduce((a, x) => x.n > a.n ? x : a, hours[0]); return b.n ? `${pad(b.h)}:00 to ${pad(b.h + 1)}:00 (${b.n} calls)` : "no calls yet"; })()}</span></div>
+        <div class="panel-body">
+          <div class="cols">${Array.from({ length: topH / stepH + 1 }, (_, i) => i * stepH).map(v => `<div class="grid-l" style="bottom:${v / topH * 100}%"><span>${v}</span></div>`).join("")}
+            <div class="bars-c">${hours.map(x => `<div class="col ${x.h > curH ? "dim" : ""}" data-tip="${pad(x.h)}:00 to ${pad(x.h + 1)}:00: <b>${x.n}</b> call${x.n === 1 ? "" : "s"}"><i style="height:${x.n / topH * 100}%"></i></div>`).join("")}</div></div>
+          <div class="x-axis">${hours.map(x => `<span>${pad(x.h)}</span>`).join("")}</div>
+        </div></section>
+    </div>
+  </div>`;
+  $$("[data-r]").forEach(b => b.onclick = () => { UI.range = b.dataset.r; viewReports(); });
+}
+
+/* ================= Audit view ================= */
+const ACTION_LABEL = { "auth.login": "Signed in", "auth.logout": "Signed out", "task.create": "Task created", "task.view": "Viewed record", "task.start": "Started task", "task.note": "Added note", "task.callback": "Logged call-back", "task.reopen": "Reopened task", "sms.send": "Sent SMS", "patient.view_phone": "Viewed contact details", "call.play_recording": "Played recording", "call.open_transcript": "Opened transcript", "call.open_recording": "Opened recording" };
+function viewAudit() {
+  const kinds = { all: "All actions", auth: "Sign-ins", task: "Task changes", sms: "Texts sent", patient: "Record access", call: "Call recordings" };
+  const list = S.audit.filter(e => (UI.auditWho === "all" || e.by === UI.auditWho) && (UI.auditKind === "all" || e.action.startsWith(UI.auditKind + ".") || (UI.auditKind === "patient" && e.action === "task.view"))).slice().reverse();
+  $("#main").innerHTML = `
+  <div class="page">
+    <div class="page-head"><div><h1>Audit trail</h1><p class="sub">Every sign-in, record view and change, by named member of staff</p></div></div>
+    <div class="callout">${ic("shield")}<p><strong>Append-only and tamper-evident.</strong> Each entry stores a hash of the one before it, so an edited or deleted row breaks the chain. Entries are kept for 8 years in line with NHS records guidance, and can be exported for a DSPT audit or a subject access request.</p></div>
+    <section class="panel">
+      <div class="toolbar">
+        <select class="select" id="a-who" aria-label="Staff member"><option value="all">All staff</option>${[...STAFF, staff("sys")].map(s => `<option value="${s.id}" ${UI.auditWho === s.id ? "selected" : ""}>${s.name}</option>`).join("")}</select>
+        <select class="select" id="a-kind" aria-label="Action type">${Object.entries(kinds).map(([k, v]) => `<option value="${k}" ${UI.auditKind === k ? "selected" : ""}>${v}</option>`).join("")}</select>
+        <span class="muted num" style="margin-left:auto">${list.length} entries</span>
+      </div>
+      <div class="table-wrap"><table class="tbl"><thead><tr><th>Time</th><th>Staff</th><th>Action</th><th>Record</th><th>Detail</th><th>Device</th><th>Chain</th></tr></thead>
+      <tbody>${list.slice(0, 200).map(e => `<tr class="${e.fresh ? "fresh" : ""}"><td class="mono">${isToday(e.at) ? "" : fmtDay(e.at) + " "}${fmtTimeS(e.at)}</td><td><span class="who">${av(e.by)} ${esc(staff(e.by).name)}</span></td><td><span class="act">${ACTION_LABEL[e.action] || e.action}</span><br><span class="act-k">${e.action}</span></td><td class="mono">${esc(e.target)}</td><td>${esc(e.detail)}</td><td class="muted" style="white-space:nowrap">${esc(e.ip)}</td><td class="mono chain">${e.hash}</td></tr>`).join("") || `<tr><td colspan="7"><div class="empty"><strong>No entries</strong><span>Try a different filter.</span></div></td></tr>`}</tbody></table></div>
+    </section>
+  </div>`;
+  $("#a-who").onchange = e => { UI.auditWho = e.target.value; viewAudit(); };
+  $("#a-kind").onchange = e => { UI.auditKind = e.target.value; viewAudit(); };
+}
+
+/* ================= Connections view ================= */
+function viewConnections() {
+  const hooks = S.hooks.slice().sort((a, b) => b.at - a.at).slice(0, 8);
+  const smsToday = S.sms.filter(s => isToday(s.at));
+  const ENDPOINT = "https://api.counterline.co.uk/webhooks/retell/fq842";
+  $("#main").innerHTML = `
+  <div class="page">
+    <div class="page-head"><div><h1>Connections</h1><p class="sub">How calls get in, how texts go out, and where the data lives</p></div>
+      <div class="actions"><button class="btn primary" type="button" id="cn-test">${ic("bolt", "sm")} Send a test call result</button></div></div>
+    <div class="conn-grid">
+      <div class="conn-stack">
+        <section class="panel">
+          <div class="panel-head"><div class="svc-head"><span class="svc-logo">${ic("phone")}</span><div><h2>Retell AI voice agent</h2><span class="muted" style="font-size:12.5px">Receives call results and turns them into tasks</span></div></div><span class="pill done">Receiving</span></div>
+          <div class="panel-body" style="display:grid;gap:14px">
+            <div class="endpoint"><span class="method">POST</span><code id="cn-url">${ENDPOINT}</code><button class="icon-btn" type="button" id="cn-copy" aria-label="Copy webhook URL">${ic("copy", "sm")}</button></div>
+            <ul class="checks">
+              <li>${ic("check", "sm")}<span>Signature checked on every request<small>Requests without a valid x-retell-signature are rejected with 401</small></span></li>
+              <li>${ic("check", "sm")}<span>Duplicate-safe<small>Each call_id creates one task, even if Retell retries</small></span></li>
+              <li>${ic("check", "sm")}<span>Listens for call_analyzed<small>Summary, extracted patient fields, transcript and recording link</small></span></li>
+            </ul>
+          </div>
+          <div class="panel-head" style="border-top:1px solid var(--line)"><h3>Recent webhook deliveries</h3><span class="muted num" style="font-size:12.5px">${S.hooks.length} today · all accepted</span></div>
+          <div>${hooks.map(h => `<details class="evt"><summary><span class="mono">${fmtTimeS(h.at)}</span><strong>${h.type} · ${h.callId.slice(0, 16)}…</strong><span class="code200">${h.status} · ${h.ms}ms</span></summary><pre>${esc(JSON.stringify(h.payload, null, 2))}</pre></details>`).join("")}</div>
+        </section>
+      </div>
+      <div class="conn-stack">
+        <section class="panel">
+          <div class="panel-head"><div class="svc-head"><span class="svc-logo">${ic("msg")}</span><div><h2>Twilio SMS</h2><span class="muted" style="font-size:12.5px">Texts patients when a task is ready</span></div></div><span class="pill done">Connected</span></div>
+          <div class="panel-body"><div class="kv-tight">
+            <span>Sender name</span><span>HARBOURSIDE</span>
+            <span>Texts sent today</span><span>${smsToday.length}</span>
+            <span>Delivered</span><span>${smsToday.length ? "100%" : "–"}</span>
+            <span>Opt-outs honoured</span><span>STOP / START</span>
+            <span>Delivery receipts</span><span>Status callback on</span>
+          </div></div>
+        </section>
+        <section class="panel">
+          <div class="panel-head"><div class="svc-head"><span class="svc-logo">${ic("server")}</span><div><h2>Hosting and data</h2><span class="muted" style="font-size:12.5px">Where patient data is stored</span></div></div></div>
+          <div class="panel-body"><ul class="checks">
+            <li>${ic("check", "sm")}<span>AWS London region (eu-west-2)<small>App, database and backups stay in the UK</small></span></li>
+            <li>${ic("check", "sm")}<span>PostgreSQL, encrypted at rest<small>AWS KMS keys, TLS 1.2+ in transit</small></span></li>
+            <li>${ic("check", "sm")}<span>Two-step sign-in for every account<small>Authenticator app, 15-minute idle lock</small></span></li>
+            <li>${ic("check", "sm")}<span>Least-privilege roles<small>Counter staff see masked contact details by default</small></span></li>
+            <li>${ic("check", "sm")}<span>Retention you control<small>Recordings 90 days, tasks 8 years, audit 8 years</small></span></li>
+          </ul></div>
+        </section>
+      </div>
+    </div>
+  </div>`;
+  $("#cn-test").onclick = () => { location.hash = "tasks"; setTimeout(simulateCall, 50); };
+  $("#cn-copy").onclick = () => {
+    const done = () => toast("Webhook URL copied", ENDPOINT, { icon: "copy" });
+    try { navigator.clipboard.writeText(ENDPOINT).then(done, () => { selectText($("#cn-url")); toast("Press Ctrl+C to copy", "The URL is selected", { icon: "copy" }); }); }
+    catch (e) { selectText($("#cn-url")); }
+  };
+}
+function selectText(el) { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+
+/* ================= Boot & live loop ================= */
+function boot() {
+  if (!S.user) { renderLogin(); return; }
+  renderShell(); renderView();
+}
+try { const th = localStorage.getItem("counterline-theme"); if (th) document.documentElement.dataset.theme = th; } catch (e) {}
+window.addEventListener("hashchange", () => { if (S.user) { closeDrawer(); renderView(); window.scrollTo(0, 0); } });
+
+// Live refresh: countdowns and overdue flips without reloading the page
+setInterval(() => {
+  if (!S.user) return;
+  renderNav();
+  if (route() === "tasks") { renderKpis(); renderTaskList(); }
+  if (UI.openTask && !$(".modal")) renderDrawer();
+}, 20000);
+// Auto-simulated incoming calls
+let nextSim = now() + 35000;
+setInterval(() => {
+  if (!S.user || !S.autoSim || simBusy || $(".modal")) return;
+  if (now() >= nextSim) { simulateCall(); nextSim = now() + rnd(70, 120) * 1000; }
+}, 3000);
+
+boot();
+})();
+</script>
+
+</body>
+</html>
